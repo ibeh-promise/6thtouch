@@ -3,12 +3,12 @@
     "name": "6thtouch",
     "slug": "6thtouch",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "Portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "6thtouch",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/images/finger-print.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -26,10 +26,7 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": [
-      "expo-router",
-      "expo-video"
-    ],
+    "plugins": ["expo-router", "expo-video"],
     "experiments": {
       "typedRoutes": true
     }
