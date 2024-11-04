@@ -1,25 +1,52 @@
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import React from "react";
 import { FontAwesome } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import body from "@/constants/Colors";
 
-export default function Footer() {
+export default function Footer({ page, setPage }) {
+  const router = useRouter();
+  const navigateTo = (pageName) => {
+    router.navigate(`/${pageName}`);
+  };
+
   return (
     <View style={styles.bottomContainer}>
       <View style={styles.navContainer}>
-        <TouchableOpacity style={styles.nav}>
-          <FontAwesome name="home" size={25} color={body.tertiary} />
-        </TouchableOpacity>
-        <Text style={styles.navText}>Courses</Text>
-      </View>
-      <View style={styles.navContainer}>
-        <TouchableOpacity style={[styles.nav, styles.active]}>
-          <FontAwesome name="wpexplorer" size={25} color={body.dominant} />
+        <TouchableOpacity
+          style={[styles.nav, page === "explore" ? styles.active : null]}
+          onPress={() => navigateTo("explore")}
+        >
+          <FontAwesome
+            name="wpexplorer"
+            size={25}
+            color={page === "explore" ? body.dominant : body.tertiary}
+          />
         </TouchableOpacity>
         <Text style={styles.navText}>Explore</Text>
       </View>
       <View style={styles.navContainer}>
-        <TouchableOpacity style={styles.nav}>
-          <FontAwesome name="user-circle" size={25} color={body.tertiary} />
+        <TouchableOpacity
+          style={[styles.nav, page === "courses" ? styles.active : null]}
+          onPress={() => navigateTo("courses")}
+        >
+          <FontAwesome
+            name="home"
+            size={25}
+            color={page === "courses" ? body.dominant : body.tertiary}
+          />
+        </TouchableOpacity>
+        <Text style={styles.navText}>Courses</Text>
+      </View>
+      <View style={styles.navContainer}>
+        <TouchableOpacity
+          style={[styles.nav, page === "account" ? styles.active : null]}
+          onPress={() => navigateTo("account")}
+        >
+          <FontAwesome
+            name="user-circle"
+            size={25}
+            color={page === "account" ? body.dominant : body.tertiary}
+          />
         </TouchableOpacity>
         <Text style={styles.navText}>Account</Text>
       </View>
