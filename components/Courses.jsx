@@ -10,7 +10,7 @@ export default function Courses({ data, displayOverview, setDisplayOverview }) {
   const handleEnroll = async () => {
     try {
       await AsyncStorage.setItem("id", data.id);
-      router.navigate("/coursesOverview/overview");
+      router.navigate("/payment");
     } catch (error) {
       throw error;
     }

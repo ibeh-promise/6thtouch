@@ -35,7 +35,6 @@ export default function TabLayout() {
         headerTintColor: "white",
         tabBarStyle: styles.tabBarCta,
         tabBarLabelStyle: {
-          marginBottom: 20,
           fontWeight: "800",
           textTransform: "capitalize",
           color: "white",
@@ -206,18 +205,18 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   nav: {
-    width: 100,
+    width: 80,
+    height: 35,
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    padding: 5,
     borderRadius: 20,
+    marginBottom: 10,
   },
   tabBarCta: {
     backgroundColor: body.dominant,
-    height: 100,
-    justifyContent: "center",
-    alignItems: "center",
+    paddingTop: 20,
+    height: 90,
   },
   active: {
     backgroundColor: body.tertiary,

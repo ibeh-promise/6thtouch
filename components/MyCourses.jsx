@@ -2,14 +2,10 @@ import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import { useState } from "react";
 import body from "@/constants/Colors";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
-import useAuth from "@/hooks/useAuth";
 import { router } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function PaidCourses({
-  data,
-  displayOverview,
-  setDisplayOverview,
-}) {
+export default function MyCourses({ data }) {
   return (
     <View style={styles.container}>
       <View style={styles.container2}>
@@ -26,8 +22,10 @@ export default function PaidCourses({
           <View style={styles.btnContainer}>
             <TouchableOpacity
               style={styles.button1}
-              onPress={() => {
-                router.navigate("/coursesOverview/coursesView");
+              onPress={async () => {
+                await AsyncStorage.setItem("title", data.title);
+                await AsyncStorage.setItem("id", data.id);
+                router.navigate("/coursesOverview/courseView");
               }}
             >
               <Text style={{ color: "white", fontWeight: "700" }}>
