@@ -12,6 +12,10 @@
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
     "app/*.jsx",
-    "constants/Colors.js"
+    "constants/Colors.js",
+    "app/(tabs)/*.jsx",
+    "app/settings/otp/*.jsx",
+    "app/settings/*/*.jsx",
+    "app/settings/*.jsx"
   ]
 }

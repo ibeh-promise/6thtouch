@@ -1,9 +1,14 @@
-body = {
+let body = {
   dominant: "#003366",
-  tertiary: "white",
+  dominant2: "#003377",
+  tertiary: "#F2F2F2",
   darkDominant: "rgba(0, 51, 102, 0.49)",
   darkDominant2: "#0F2841",
-  reccessive: "#007BFF",
+  recessive: "#007BFF",
+  complementary: "#064787",
+  textDark: "black",
+  textLight: "#F2F2F2",
+  textDominant: "#003366",
 };
 
 export default body;

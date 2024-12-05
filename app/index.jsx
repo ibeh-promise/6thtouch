@@ -7,12 +7,13 @@ import {
   Dimensions,
   StatusBar,
   ActivityIndicator,
+  Modal,
 } from "react-native";
 import { useState } from "react";
 import { useRouter } from "expo-router";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import useAuth from "@/hooks/useAuth";
-import body from "../constants/Colors";
+import body from "@/constants/Colors";
 export default function Page() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -21,6 +22,7 @@ export default function Page() {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async () => {
+    if (loading) return;
     const { login } = useAuth();
     await login(email, password, setLoading);
   };
@@ -30,6 +32,8 @@ export default function Page() {
       <Text style={styles.textWelcome}>Welcome back! Continue learning</Text>
 
       <View style={styles.container2}>
+        {loading && <Modal transparent={true} />}
+
         <Text style={styles.login}>Login</Text>
         <View
           style={{
@@ -62,8 +66,26 @@ export default function Page() {
             />
           </View>
           <TouchableOpacity style={styles.loginBtn} onPress={handleSubmit}>
+            {loading && <ActivityIndicator />}
+
             <Text style={styles.loginButtonText}>Login</Text>
           </TouchableOpacity>
+
+          <View
+            style={{
+              width: "100%",
+              alignItems: "flex-start",
+              paddingHorizontal: 30,
+              paddingTop: 15,
+            }}
+          >
+            <Text
+              style={{ color: "#586FBD", fontSize: 17 }}
+              onPress={() => router.navigate("/settings/otp/forgetPassword")}
+            >
+              Forget Password
+            </Text>
+          </View>
           <View
             style={{
               flexDirection: "row",
@@ -71,14 +93,18 @@ export default function Page() {
               paddingTop: 15,
             }}
           >
-            <Text style={{ fontSize: 20 }}>Don't have an account?, </Text>
+            <Text
+              style={{ fontSize: 20, color: body.textDark }}
+              onPress={() => router.navigate("/explore")}
+            >
+              Don't have an account?,{" "}
+            </Text>
             <Text
               style={{ color: "#586FBD", fontSize: 20 }}
               onPress={() => router.navigate("/register")}
             >
               Register
             </Text>
-            {loading && <ActivityIndicator />}
           </View>
         </View>
       </View>
@@ -92,6 +118,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-end",
     alignItems: "center",
+    paddingTop: 50,
+    overflow: "scroll",
   },
   container2: {
     backgroundColor: body.tertiary,
@@ -99,10 +127,11 @@ const styles = StyleSheet.create({
     height: "90%",
     borderTopRightRadius: 30,
     borderTopLeftRadius: 30,
+    overflow: "scroll",
   },
   text: {
     textAlign: "center",
-    color: "#f2f2f2",
+    color: "#F2F2F2",
     fontSize: 30,
     fontWeight: "900",
   },
@@ -148,6 +177,8 @@ const styles = StyleSheet.create({
     padding: 15,
     marginTop: 20,
     height: 54,
+    flexDirection: "row",
+    justifyContent: "center",
   },
   loginButtonText: {
     color: "#f2f2f2",

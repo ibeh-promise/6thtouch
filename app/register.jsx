@@ -9,28 +9,31 @@ import {
   ActivityIndicator,
   Alert,
   StatusBar,
+  ScrollView,
+  Modal,
 } from "react-native";
 import { useRouter } from "expo-router";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useState, useEffect } from "react";
-import body from "../constants/Colors";
-import useAuth from "../hooks/useAuth";
+import body from "@/constants/Colors";
+import useAuth from "@/hooks/useAuth";
+
 export default function Page() {
   const router = useRouter();
-  const [firstname, setFirstname] = useState("");
-  const [lastname, setLastname] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
-
   const [showPassword, setShowPassword] = useState(false);
   const { signup, error, response } = useAuth();
 
   const handleSubmit = async () => {
+    if (loading) return;
     await signup(
-      firstname,
-      lastname,
+      firstName,
+      lastName,
       email,
       password,
       confirmPassword,
@@ -43,92 +46,80 @@ export default function Page() {
       Alert.alert("Signup Error", error);
     }
   }, [error]);
+
   return (
     <View style={styles.container}>
       <Text style={styles.text}>6THTOUCH</Text>
       <Text style={styles.textWelcome}>Welcome! Start learning</Text>
 
       <View style={styles.container2}>
-        <Text style={styles.login}>Register</Text>
-        <View
-          style={{
-            width: "100%",
-            paddingTop: 20,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <TextInput
-            style={styles.input}
-            placeholder="Firstname"
-            onChangeText={(text) => setFirstname(text)}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Lastname"
-            onChangeText={(text) => setLastname(text)}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            onChangeText={(text) => setEmail(text)}
-          />
-          <View style={styles.passwordInputContainer}>
+        <ScrollView contentContainerStyle={styles.scrollViewContent}>
+          {loading && <Modal transparent={true} />}
+
+          <Text style={styles.login}>Register</Text>
+          <View style={styles.formContainer}>
             <TextInput
-              style={styles.passwordInput}
-              secureTextEntry={!showPassword}
-              placeholder="Password "
-              onChangeText={(text) => setPassword(text)}
+              style={styles.input}
+              placeholder="Firstname"
+              onChangeText={(text) => setFirstName(text)}
             />
-            <FontAwesome
-              onPress={() => setShowPassword(!showPassword)}
-              name={showPassword ? "eye" : "eye-slash"}
-              color="grey"
-              size={18}
-              style={styles.eyeIcon}
-            />
-          </View>
-          <View style={styles.passwordInputContainer}>
             <TextInput
-              style={styles.passwordInput}
-              secureTextEntry={!showPassword}
-              placeholder="Confirm password "
-              onChangeText={(text) => setConfirmPassword(text)}
+              style={styles.input}
+              placeholder="Lastname"
+              onChangeText={(text) => setLastName(text)}
             />
-            <FontAwesome
-              onPress={() => setShowPassword(!showPassword)}
-              name={showPassword ? "eye" : "eye-slash"}
-              color="grey"
-              size={18}
-              style={styles.eyeIcon}
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              onChangeText={(text) => setEmail(text)}
             />
+            <View style={styles.passwordInputContainer}>
+              <TextInput
+                style={styles.passwordInput}
+                secureTextEntry={!showPassword}
+                placeholder="Password "
+                onChangeText={(text) => setPassword(text)}
+              />
+              <FontAwesome
+                onPress={() => setShowPassword(!showPassword)}
+                name={showPassword ? "eye" : "eye-slash"}
+                color="grey"
+                size={18}
+                style={styles.eyeIcon}
+              />
+            </View>
+            <View style={styles.passwordInputContainer}>
+              <TextInput
+                style={styles.passwordInput}
+                secureTextEntry={!showPassword}
+                placeholder="Confirm password "
+                onChangeText={(text) => setConfirmPassword(text)}
+              />
+              <FontAwesome
+                onPress={() => setShowPassword(!showPassword)}
+                name={showPassword ? "eye" : "eye-slash"}
+                color="grey"
+                size={18}
+                style={styles.eyeIcon}
+              />
+            </View>
+            <TouchableOpacity style={styles.loginBtn} onPress={handleSubmit}>
+              {loading && <ActivityIndicator />}
+              <Text style={styles.loginButtonText}>Register</Text>
+            </TouchableOpacity>
+            <View style={styles.loginPromptContainer}>
+              <Text style={{ fontSize: 20, color: body.textDark }}>
+                Already have an account?,{" "}
+              </Text>
+              <Text
+                style={{ color: "#586FBD", fontSize: 20 }}
+                onPress={() => router.back()}
+              >
+                Login
+              </Text>
+            </View>
           </View>
-          <TouchableOpacity style={styles.loginBtn}>
-            <Text
-              style={styles.loginButtonText}
-              onPress={handleSubmit}
-              disabled={true}
-            >
-              Register
-            </Text>
-          </TouchableOpacity>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "center",
-              paddingTop: 15,
-            }}
-          >
-            <Text style={{ fontSize: 20 }}>Already have an account?, </Text>
-            <Text
-              style={{ color: "#586FBD", fontSize: 20 }}
-              onPress={() => router.back()}
-            >
-              Login
-            </Text>
-            {loading && <ActivityIndicator />}
-          </View>
-        </View>
+        </ScrollView>
       </View>
     </View>
   );
@@ -140,6 +131,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-end",
     alignItems: "center",
+    paddingTop: 50,
   },
   container2: {
     backgroundColor: body.tertiary,
@@ -147,6 +139,14 @@ const styles = StyleSheet.create({
     height: "90%",
     borderTopRightRadius: 30,
     borderTopLeftRadius: 30,
+    overflow: "hidden", // Prevents children from overflowing out of the container
+  },
+  scrollViewContent: {
+    paddingBottom: 20, // Adds extra padding to bottom for scroll if needed
+    paddingTop: 20,
+
+    justifyContent: "center",
+    alignItems: "center",
   },
   text: {
     textAlign: "center",
@@ -156,7 +156,8 @@ const styles = StyleSheet.create({
   },
   login: {
     textAlign: "left",
-    margin: 30,
+    width: Dimensions.get("window").width - 50,
+    margin: 40,
     marginBottom: 50,
     fontSize: 30,
     fontWeight: "900",
@@ -196,6 +197,8 @@ const styles = StyleSheet.create({
     padding: 15,
     marginBottom: 20,
     height: 54,
+    flexDirection: "row",
+    justifyContent: "center",
   },
   loginButtonText: {
     color: "#f2f2f2",
@@ -215,5 +218,13 @@ const styles = StyleSheet.create({
   },
   eyeIcon: {
     backgroundColor: "transparent",
+  },
+  formContainer: {
+    paddingBottom: 20, // Optional extra padding for ScrollView content
+  },
+  loginPromptContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    paddingTop: 15,
   },
 });
