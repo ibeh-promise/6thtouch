@@ -237,28 +237,6 @@ const useAuth = () => {
       Alert.alert("Verification Error", "please type in your OTP code");
     }
   };
-
-  const courses = async (setLoading, setError) => {
-    try {
-      setLoading(true);
-      const token = await AsyncStorage.getItem("token");
-      const response = await axios.get(
-        "https://6thtouchsever.vercel.app/courses/",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      console.log(response.data);
-      return response.data;
-    } catch (error) {
-      console.error(error.message);
-      setError(error);
-    } finally {
-      setLoading(false);
-    }
-  };
   const resetPassword = async (newPassword, confirmPassword, setLoading) => {
     if (!newPassword && !confirmPassword) {
       Alert.alert(
@@ -297,6 +275,31 @@ const useAuth = () => {
       }
     }
   };
+
+  const courses = async (setLoading, setError) => {
+    try {
+      setLoading(true);
+      const token = await AsyncStorage.getItem("token");
+      const response = await axios.get(
+        "https://6thtouchsever.vercel.app/courses/",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(response.data);
+      return response.data;
+      setError(false);
+    } catch (error) {
+      console.error(error.message);
+      if (error.message) {
+        setError(error);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
   const coursesCategories = async (categories, setLoading, setError) => {
     try {
       setLoading(true);
@@ -311,6 +314,7 @@ const useAuth = () => {
       );
       console.log(response.data);
       return response.data;
+      setError(false);
     } catch (error) {
       console.error(error.message);
       setError(true);
@@ -324,7 +328,7 @@ const useAuth = () => {
       const id = await AsyncStorage.getItem("id");
       const token = await AsyncStorage.getItem("token");
       const response = await axios.get(
-        `https://6thtouchsever.vercel.app/courses/${id}`,
+        `https://6thtouchsever.vercel.app/courses/${id}/topics`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -333,9 +337,36 @@ const useAuth = () => {
       );
       console.log(response.data);
       return response.data;
+      setError(false);
     } catch (error) {
       console.error(error.message);
-      setError(true);
+      if (error.message) {
+        setError(true);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+  const myCourses = async (setLoading, setError) => {
+    try {
+      setLoading(true);
+      const token = await AsyncStorage.getItem("token");
+      const response = await axios.get(
+        "https://6thtouchsever.vercel.app/courses/myCourses",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(response.data);
+      return response.data;
+      setError(false);
+    } catch (error) {
+      console.error(error.message);
+      if (error.message) {
+        setError(true);
+      }
     } finally {
       setLoading(false);
     }

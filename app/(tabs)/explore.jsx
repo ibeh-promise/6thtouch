@@ -10,7 +10,12 @@ import {
 } from "react-native";
 import { useState, useEffect } from "react";
 import { useRouter } from "expo-router";
-import { FontAwesome, FontAwesome5, FontAwesome6 } from "@expo/vector-icons";
+import {
+  FontAwesome,
+  FontAwesome5,
+  FontAwesome6,
+  MaterialIcons,
+} from "@expo/vector-icons";
 import RNRestart from "react-native-restart";
 import Footer from "@/components/Footer";
 import Courses from "@/components/Courses";
@@ -25,7 +30,8 @@ export default function Page() {
   const [isActive, setIsActive] = useState("all");
   const [response, setResponse] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(false);
+  const [filter, setFilter] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,11 +46,13 @@ export default function Page() {
     const { courses } = useAuth();
     const data = await courses(setLoading, setError);
     setResponse(data);
+    setError(false)
   };
   const handleFetchCategories = async (categories) => {
     const { coursesCategories } = useAuth();
     const data = await coursesCategories(categories, setLoading, setError);
     setResponse(data);
+    setError(false)
   };
 
   const categoriesActive = (data) => {
@@ -63,77 +71,124 @@ export default function Page() {
       <View
         style={[styles.topContainer, { backgroundColor: body.darkDominant2 }]}
       >
-        {displayOverview && (
-          <Overview setDisplayOverview={setDisplayOverview} />
+        {filter ? (
+          <View style={styles.categories}>
+            <View style={styles.categoriesAlignment}>
+              <TouchableOpacity
+                onPress={() => {
+                  setIsActive("all");
+                  handleFetch();
+                }}
+                style={[categoriesActive("all"), styles.categoriesContent]}
+              >
+                <FontAwesome6
+                  name="earth-africa"
+                  size={20}
+                  color={isActive == "all" ? body.tertiary : body.textDark}
+                />
+                <Text style={[categoriesTextActive("all")]}>
+                  {" "}
+                  All Categories
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  setIsActive("robot");
+                  handleFetchCategories("Robotics");
+                }}
+                style={[categoriesActive("robot"), styles.categoriesContent]}
+              >
+                <FontAwesome5
+                  name="robot"
+                  size={20}
+                  color={isActive == "robot" ? body.tertiary : body.textDark}
+                />
+                <Text style={[categoriesTextActive("robot")]}> Robotics</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.categoriesAlignment}>
+              <TouchableOpacity
+                onPress={() => {
+                  setIsActive("webd");
+                  handleFetchCategories("Coding");
+                }}
+                style={[categoriesActive("webd"), styles.categoriesContent]}
+              >
+                <FontAwesome5
+                  name="laptop-code"
+                  size={20}
+                  color={isActive == "webd" ? body.tertiary : body.textDark}
+                />
+                <Text style={[categoriesTextActive("webd")]}>
+                  {" "}
+                  Web Development
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  setIsActive("pd");
+                  handleFetchCategories("Robotics");
+                }}
+                style={[categoriesActive("pd"), styles.categoriesContent]}
+              >
+                <FontAwesome5
+                  name="laptop-code"
+                  size={20}
+                  color={isActive == "pd" ? body.tertiary : body.textDark}
+                />
+                <Text style={[categoriesTextActive("pd")]}>
+                  {" "}
+                  Product Designing
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  setFilter(false);
+                }}
+                style={{ position: "absolute", bottom: 0, left: -20 }}
+              >
+                <MaterialIcons name="close" size={20} color={body.textDark} />
+              </TouchableOpacity>
+            </View>
+          </View>
+        ) : (
+          <View style={styles.categories}>
+            <View
+              style={{
+                width: "100%",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <TouchableOpacity
+                onPress={() => {
+                  setIsActive("all");
+                  handleFetch();
+                }}
+                style={[categoriesActive("all"), styles.categoriesContent]}
+              >
+                <FontAwesome6
+                  name="earth-africa"
+                  size={20}
+                  color={isActive == "all" ? body.tertiary : body.textDark}
+                />
+                <Text style={[categoriesTextActive("all")]}>
+                  {" "}
+                  All Categories
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  setFilter(true);
+                }}
+                style={styles.categoriesContent}
+              >
+                <FontAwesome6 name="sort" size={20} color={body.textDark} />
+              </TouchableOpacity>
+            </View>
+          </View>
         )}
-        <View style={styles.categories}>
-          <View style={styles.categoriesAlignment}>
-            <TouchableOpacity
-              onPress={() => {
-                setIsActive("all");
-                handleFetch();
-              }}
-              style={[categoriesActive("all"), styles.categoriesContent]}
-            >
-              <FontAwesome6
-                name="earth-africa"
-                size={20}
-                color={isActive == "all" ? body.tertiary : body.textDark}
-              />
-              <Text style={[categoriesTextActive("all")]}> All Categories</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                setIsActive("robot");
-                handleFetchCategories("Robotics");
-              }}
-              style={[categoriesActive("robot"), styles.categoriesContent]}
-            >
-              <FontAwesome5
-                name="robot"
-                size={20}
-                color={isActive == "robot" ? body.tertiary : body.textDark}
-              />
-              <Text style={[categoriesTextActive("robot")]}> Robotics</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.categoriesAlignment}>
-            <TouchableOpacity
-              onPress={() => {
-                setIsActive("webd");
-                handleFetchCategories("Coding");
-              }}
-              style={[categoriesActive("webd"), styles.categoriesContent]}
-            >
-              <FontAwesome5
-                name="laptop-code"
-                size={20}
-                color={isActive == "webd" ? body.tertiary : body.textDark}
-              />
-              <Text style={[categoriesTextActive("webd")]}>
-                {" "}
-                Web Development
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                setIsActive("pd");
-                handleFetchCategories("Robotics");
-              }}
-              style={[categoriesActive("pd"), styles.categoriesContent]}
-            >
-              <FontAwesome5
-                name="laptop-code"
-                size={20}
-                color={isActive == "pd" ? body.tertiary : body.textDark}
-              />
-              <Text style={[categoriesTextActive("pd")]}>
-                {" "}
-                Product Designing
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
 
         {loading ? (
           <ActivityIndicator
@@ -177,7 +232,6 @@ const styles = StyleSheet.create({
   },
   categories: {
     width: "100%",
-    height: 150,
     padding: 20,
     flexDirection: "row",
     justifyContent: "space-around",
@@ -187,13 +241,15 @@ const styles = StyleSheet.create({
   categoriesContent: {
     flexDirection: "row",
     alignItems: "center",
+    padding: 20,
   },
   categoriesAlignment: {
     flexDirection: "column",
     justifyContent: "space-around",
   },
   active: {
-    padding: 5,
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 5,
     backgroundColor: body.recessive,
   },

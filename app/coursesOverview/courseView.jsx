@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -8,37 +9,90 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
-import { useEffect, useState } from "react";
 import body from "@/constants/Colors";
-import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
+import { FontAwesome, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import useAuth from "@/hooks/useAuth";
+import { useRouter } from "expo-router";
 import { Video } from "expo-av";
+import * as Speech from "expo-speech";
 
 export default function Page() {
+  const router = useRouter();
   const [title, setTitle] = useState("");
-  const [response, setResponse] = useState({});
+  const [response, setResponse] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [play, setPlay] = useState(false);
+  const [isDone, setIsDone] = useState(false);
   useEffect(() => {
     const fetchData = async () => {
       const { coursesById } = useAuth();
       const data = await coursesById(setLoading, setError);
       setResponse(data);
-      console.log("data overview", response.topics);
+      setError(false);
+      console.log("data overview", data);
+      if (data.length === 0) {
+        setIsDone(true);
+      }
     };
     fetchData();
   }, []);
-  const getItem = async () => {
-    try {
-      const data = await AsyncStorage.getItem("title");
-      setTitle(data);
-    } catch (error) {
-      throw error;
+
+  useEffect(() => {
+    const getItem = async () => {
+      try {
+        const data = await AsyncStorage.getItem("title");
+        setTitle(data);
+        console.log(data);
+      } catch (error) {
+        console.error("Error fetching title:", error);
+      }
+    };
+    getItem();
+  }, []);
+
+  const handleFetch = async () => {
+    const { coursesById } = useAuth();
+    const data = await coursesById(setLoading, setError);
+    setResponse(data);
+    console.log("data overview", data);
+    if (data.length === 0) {
+      setIsDone(true);
     }
   };
 
-  getItem();
+  const handleNext = () => {
+    if (progress + 1 >= response.length) {
+      setIsDone(true);
+    } else {
+      setProgress(progress + 1);
+      setIsDone(false);
+    }
+  };
+  const handleBack = async () => {
+    setProgress(progress - 1);
+  };
+
+  const playAudio = async () => {
+    setPlay(true);
+    Speech.speak(response[progress]?.note || "", {
+      onDone: () => {
+        console.log("Speech completed");
+        setPlay(false);
+      },
+      onError: (error) => {
+        console.error("Speech error:", error);
+        setPlay(false);
+      },
+    });
+  };
+
+  const stopAudio = () => {
+    Speech.stop();
+    setPlay(false);
+  };
 
   return (
     <View style={styles.container}>
@@ -59,44 +113,136 @@ export default function Page() {
         </View>
       ) : (
         <>
-          <View style={{ width: "100%" }}>
-            <Text style={styles.contentText}>{title}</Text>
+          <View
+            style={{ width: "100%", paddingHorizontal: 20, paddingTop: 30 }}
+          >
+            <Text style={{ color: "white", fontWeight: 800, fontSize: 20 }}>
+              {response[progress]?.title}
+            </Text>
+            {response[progress]?.video && (
+              <Video
+                source={{ uri: response[progress]?.video }}
+                style={styles.video}
+                resizeMode="contain"
+                useNativeControls
+                onLoadStart={() => console.log("Loading video...")}
+                onLoad={() => console.log("Video loaded successfully")}
+                onError={(error) => console.log("Video error:", error)}
+              />
+            )}
           </View>
-          <Video
-            source={{
-              uri: "https://www.6thtouchrobotics.com.ng/assets/videos/bg-video.mp4",
-            }}
-            style={styles.video}
-            resizeMode="contain"
-            useNativeControls
-            shouldPlay
-            onLoadStart={() => console.log("Loading video...")}
-            onLoad={() => console.log("Video loaded successfully")}
-            onError={(error) => console.log("Video error:", error)}
-          />
           <View style={styles.OverviewContainer}>
-            <FlatList
-              data={response.topics}
-              renderItem={({ item }) => (
-                <ScrollView>
-                  <View style={styles.contentContainer}>
-                    <Text style={styles.contentText}>{item.title}</Text>
-                  </View>
-                </ScrollView>
+            <View style={styles.playBtnCta}>
+              {play ? (
+                <View>
+                  <TouchableOpacity>
+                    <FontAwesome
+                      name="stop-circle"
+                      size={40}
+                      color={body.dominant}
+                      onPress={stopAudio}
+                    />
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <TouchableOpacity>
+                  <FontAwesome
+                    name="play-circle"
+                    size={40}
+                    color={body.dominant}
+                    onPress={playAudio}
+                  />
+                </TouchableOpacity>
               )}
-            />
+            </View>
+            <ScrollView>
+              <View style={styles.contentContainer}>
+                <Text style={styles.contentText}>
+                  {response[progress]?.note}{" "}
+                </Text>
+                <Text style={styles.contentText}>
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde
+                  corporis repudiandae vel aut, dolorum nobis veritatis itaque
+                  deleniti sint, dicta cupiditate numquam impedit consequatur ad
+                  fuga quas? Tempora, repellendus pariatur! Lorem ipsum dolor
+                  sit amet consectetur adipisicing elit. Unde corporis
+                  repudiandae vel aut, dolorum nobis veritatis itaque deleniti
+                  sint, dicta cupiditate numquam impedit consequatur ad fuga
+                  quas? Tempora, repellendus pariatur! Lorem ipsum dolor sit
+                  amet consectetur adipisicing elit. Unde corporis repudiandae
+                  vel aut, dolorum nobis veritatis itaque deleniti sint, dicta
+                  cupiditate numquam impedit consequatur ad fuga quas? Tempora,
+                  repellendus pariatur! Lorem ipsum dolor sit amet consectetur
+                  adipisicing elit. Unde corporis repudiandae vel aut, dolorum
+                  nobis veritatis itaque deleniti sint, dicta cupiditate numquam
+                  impedit consequatur ad fuga quas? Tempora, repellendus
+                  pariatur! Lorem ipsum dolor sit amet consectetur adipisicing
+                  elit. Unde corporis repudiandae vel aut, dolorum nobis
+                  veritatis itaque deleniti sint, dicta cupiditate numquam
+                  impedit consequatur ad fuga quas? Tempora, repellendus
+                  pariatur! impedit consequatur ad fuga quas? Tempora,
+                  repellendus pariatur! Lorem ipsum dolor sit amet consectetur
+                  adipisicing elit. Unde corporis repudiandae vel aut, dolorum
+                  nobis veritatis itaque deleniti sint, dicta cupiditate numquam
+                  impedit consequatur ad fuga quas? Tempora, repellendus
+                  pariatur! Lorem ipsum dolor sit amet consectetur adipisicing
+                  elit. Unde corporis repudiandae vel aut, dolorum nobis
+                  veritatis itaque deleniti sint, dicta cupiditate numquam
+                  impedit consequatur ad fuga quas? Tempora, repellendus
+                  pariatur! Lorem ipsum dolor sit amet consectetur adipisicing
+                  elit. Unde corporis repudiandae vel aut, dolorum nobis
+                  veritatis itaque deleniti sint, dicta cupiditate numquam
+                  impedit consequatur ad fuga quas? Tempora, repellendus
+                  pariatur! Lorem ipsum dolor sit amet consectetur adipisicing
+                  elit. Unde corporis repudiandae vel aut, dolorum nobis
+                  pariatur!
+                </Text>
+              </View>
+              <View style={styles.btnCta}>
+                {isDone ? (
+                  <>
+                    <Text style={styles.doneText}>
+                      You are done with this course
+                    </Text>
+                    <TouchableOpacity
+                      style={styles.nextBtn}
+                      onPress={() => router.back()}
+                    >
+                      <Text style={styles.btnText}>Done</Text>
+                    </TouchableOpacity>
+                  </>
+                ) : (
+                  <>
+                    {progress > 0 && (
+                      <TouchableOpacity
+                        style={styles.nextBtn}
+                        onPress={handleBack}
+                      >
+                        <Text style={styles.btnText}>Back</Text>
+                      </TouchableOpacity>
+                    )}
+                    {progress < response.length - 1 && (
+                      <TouchableOpacity
+                        style={[styles.nextBtn, progress > 0 && styles.spacing]}
+                        onPress={handleNext}
+                      >
+                        <Text style={styles.btnText}>Next</Text>
+                      </TouchableOpacity>
+                    )}
+                  </>
+                )}
+              </View>
+            </ScrollView>
           </View>
         </>
       )}
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: body.dominant,
-    padding: 30,
     alignItems: "center",
     overflow: "scroll",
   },
@@ -119,19 +265,22 @@ const styles = StyleSheet.create({
   },
   OverviewContainer: {
     backgroundColor: body.tertiary,
-    borderRadius: 10,
-    padding: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     width: "100%",
+    flex: 1,
   },
   contentContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    padding: 10,
+    paddingHorizontal: 20,
+    width: "100%",
+    flex: 1,
   },
   contentText: {
     color: body.textDark,
-    fontSize: 20,
-    fontWeight: "700",
+    fontSize: 15,
     marginVertical: 10,
+    marginHorizontal: 10,
   },
   button: {
     padding: 15,
@@ -142,9 +291,64 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 5,
   },
-  enrollText: {
-    color: body.dominant,
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  errorContainerContent: {
+    width: 200,
+    padding: 20,
+    backgroundColor: body.darkDominant,
+  },
+  errorText: {
+    color: body.tertiary,
     fontSize: 15,
-    fontWeight: "800",
+  },
+  errorBtn: {
+    width: "100%",
+    padding: 10,
+    alignItems: "center",
+    marginTop: 10,
+    backgroundColor: body.dominant2,
+  },
+  nextBtn: {
+    padding: 10,
+    alignItems: "center",
+    backgroundColor: body.dominant2,
+  },
+  btnCta: {
+    width: "100%",
+    padding: 20,
+  },
+  playBtnCta: {
+    position: "absolute",
+    top: 50,
+    right: 20,
+    zIndex: 9999,
+  },
+  nextBtn: {
+    padding: 15,
+    alignItems: "center",
+    backgroundColor: body.dominant2,
+    borderRadius: 5,
+  },
+  btnText: {
+    color: "white",
+    fontWeight: "700",
+  },
+  btnCta: {
+    width: "100%",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  doneText: {
+    color: "white",
+    fontWeight: "700",
+    textAlign: "center",
+    marginBottom: 10,
+  },
+  spacing: {
+    marginTop: 10,
   },
 });

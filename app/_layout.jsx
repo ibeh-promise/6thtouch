@@ -21,8 +21,7 @@ export default function RootLayout() {
       try {
         await SplashScreen.preventAutoHideAsync();
         const token = await AsyncStorage.getItem("token");
-        const data = await AsyncStorage.getItem("title");
-        setTitle(data);
+
         setIsAuthenticated(!!token);
         setIsTokenChecked(true);
         // Use a timeout to ensure the component has mounted
@@ -44,6 +43,12 @@ export default function RootLayout() {
   if (!isTokenChecked) {
     return null;
   }
+
+  const getLocalData = async () => {
+    const data = await AsyncStorage.getItem("title");
+    setTitle(data);
+  };
+  getLocalData();
 
   return (
     <Stack
@@ -121,12 +126,18 @@ export default function RootLayout() {
       <Stack.Screen
         name="coursesOverview/courseView"
         options={{
-          headerTitle: { title },
+          headerTitle: title ? title : "null",
           headerRight: () => (
             <TouchableOpacity>
-              <FontAwesome name="bars" size={20} color={body.tertiary} />
+              <FontAwesome name="list" size={20} color={body.tertiary} />
             </TouchableOpacity>
           ),
+        }}
+      />
+      <Stack.Screen
+        name="/payment"
+        options={{
+          headerTitle: "Enroll A course",
         }}
       />
     </Stack>
