@@ -2,12 +2,12 @@ import {
   StyleSheet,
   Text,
   View,
+  ScrollView,
   TextInput,
   TouchableOpacity,
   Dimensions,
   StatusBar,
   ActivityIndicator,
-  Modal,
 } from "react-native";
 import { useState } from "react";
 import { useRouter } from "expo-router";
@@ -16,46 +16,41 @@ import useAuth from "@/hooks/useAuth";
 import body from "@/constants/Colors";
 export default function Page() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async () => {
     if (loading) return;
-    const { login } = useAuth();
-    await login(email, password, setLoading);
+    const { resetPassword } = useAuth();
+    await resetPassword(newPassword, confirmPassword, setLoading);
   };
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>6THTOUCH</Text>
-      <Text style={styles.textWelcome}>Welcome back! Continue learning</Text>
-
       <View style={styles.container2}>
-        {loading && <Modal transparent={true} />}
-
-        <Text style={styles.login}>Login</Text>
-        <View
-          style={{
-            width: "100%",
-            paddingTop: 20,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            onChangeText={(text) => {
-              setEmail(text);
-            }}
-          />
+        <View style={styles.formCta}>
           <View style={styles.passwordInputContainer}>
             <TextInput
               style={styles.passwordInput}
               secureTextEntry={!showPassword}
-              placeholder="Password "
-              onChangeText={(text) => setPassword(text)}
+              placeholder="New Password "
+              onChangeText={(text) => setNewPassword(text)}
+            />
+            <FontAwesome
+              onPress={() => setShowPassword(!showPassword)}
+              name={showPassword ? "eye" : "eye-slash"}
+              color="grey"
+              size={18}
+              style={styles.eyeIcon}
+            />
+          </View>
+          <View style={styles.passwordInputContainer}>
+            <TextInput
+              style={styles.passwordInput}
+              secureTextEntry={!showPassword}
+              placeholder="Confirm Password "
+              onChangeText={(text) => setConfirmPassword(text)}
             />
             <FontAwesome
               onPress={() => setShowPassword(!showPassword)}
@@ -68,44 +63,8 @@ export default function Page() {
           <TouchableOpacity style={styles.loginBtn} onPress={handleSubmit}>
             {loading && <ActivityIndicator />}
 
-            <Text style={styles.loginButtonText}>Login</Text>
+            <Text style={styles.loginButtonText}>Change Password</Text>
           </TouchableOpacity>
-
-          <View
-            style={{
-              width: "100%",
-              alignItems: "flex-start",
-              paddingHorizontal: 30,
-              paddingTop: 15,
-            }}
-          >
-            <Text
-              style={{ color: "#586FBD", fontSize: 17 }}
-              onPress={() => router.navigate("/settings/otp/forgetPassword")}
-            >
-              Forget Password
-            </Text>
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "center",
-              paddingTop: 15,
-            }}
-          >
-            <Text
-              style={{ fontSize: 20, color: body.textDark }}
-              onPress={() => router.navigate("/explore")}
-            >
-              Don't have an account?,{" "}
-            </Text>
-            <Text
-              style={{ color: "#586FBD", fontSize: 20 }}
-              onPress={() => router.navigate("/register")}
-            >
-              Register
-            </Text>
-          </View>
         </View>
       </View>
     </View>
@@ -118,8 +77,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-end",
     alignItems: "center",
-    paddingTop: 50,
-    overflow: "scroll",
   },
   container2: {
     backgroundColor: body.tertiary,
@@ -127,28 +84,13 @@ const styles = StyleSheet.create({
     height: "90%",
     borderTopRightRadius: 30,
     borderTopLeftRadius: 30,
-    overflow: "scroll",
   },
-  text: {
-    textAlign: "center",
-    color: "#F2F2F2",
-    fontSize: 30,
-    fontWeight: "900",
-  },
-  login: {
-    textAlign: "left",
-    margin: 30,
-    marginBottom: 50,
-    fontSize: 30,
-    fontWeight: "900",
-    color: body.dominant,
-  },
-  textWelcome: {
-    textAlign: "center",
-    color: "#f2f2f2",
-    fontSize: 20,
-    fontWeight: "900",
-    marginBottom: 30,
+  formCta: {
+    width: "100%",
+    height: "100%",
+    flex: 1,
+    paddingTop: 20,
+    alignItems: "center",
   },
   input: {
     backgroundColor: "#E2E2E2",
@@ -166,7 +108,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 5,
     borderBottomLeftRadius: 5,
     padding: 10,
-    paddingVertical: 15,
+    paddingVertical: 10,
     fontSize: 18,
     fontWeight: "500",
   },
@@ -179,6 +121,8 @@ const styles = StyleSheet.create({
     height: 54,
     flexDirection: "row",
     justifyContent: "center",
+    position: "absolute",
+    bottom: 20,
   },
   loginButtonText: {
     color: "#f2f2f2",
