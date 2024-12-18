@@ -241,6 +241,31 @@ export default function Page() {
                   size={20}
                 />
               </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.profileContent}
+                onPress={() => router.navigate("/reports/report")}
+              >
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    width: 120,
+                  }}
+                >
+                  <FontAwesome6
+                    name="bug"
+                    style={{ color: body.textDark }}
+                    size={20}
+                  />
+                  <Text style={styles.profileContentText}> Report a bug</Text>
+                </View>
+                <MaterialIcons
+                  name="keyboard-arrow-right"
+                  style={{ color: body.textDark }}
+                  size={20}
+                />
+              </TouchableOpacity>
               <TouchableOpacity style={styles.profileContent}>
                 <View
                   style={{

@@ -559,6 +559,44 @@ const searchCourse = async (query, setLoading, setError) => {
     }
   };
 
+  const createReport = async (
+    title,
+    message,
+    setLoading
+  ) => {
+    if (!title && !message ) {
+      Alert.alert(
+        "Send Bug Error",
+        "please fill form before submission"
+      );
+    } else {      
+        try {
+          setLoading(true);
+          const token = await AsyncStorage.getItem("token");
+          const response = await axios.post(
+            "https://6thtouchsever.vercel.app/reports/create",
+            {
+              title,
+              message,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          Alert.alert("", response.data.message);
+          return response;
+        } catch (error) {
+          Alert.alert("", "Network error");
+          console.log(error.message)
+        } finally {
+          setLoading(false);
+          router.back();
+        }
+    }
+  };
+
   return {
     signup,
     login,
@@ -578,6 +616,7 @@ const searchCourse = async (query, setLoading, setError) => {
     createPayment,
     searchCourse,
     paymentHistory,
+    createReport,
   };
 };
 
