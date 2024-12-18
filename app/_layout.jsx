@@ -143,6 +143,12 @@ export default function RootLayout() {
           headerTitle: "Payment History",
         }}
       />
+      <Stack.Screen
+        name="reports/report"
+        options={{
+          headerTitle: "Report a bug",
+        }}
+      />
     </Stack>
   );
 }
