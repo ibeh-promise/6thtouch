@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { useState, useEffect } from "react";
 import { Stack, useRouter } from "expo-router";
 import { setStatusBarStyle } from "expo-status-bar";
@@ -6,49 +6,35 @@ import { FontAwesome } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SplashScreen from "expo-splash-screen";
 import body from "@/constants/Colors";
+import useTitleStore from "./store/titleStore";
+
+SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isTokenChecked, setIsTokenChecked] = useState(false);
-  const [title, setTitle] = useState("");
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const message = useTitleStore((state) => state.message);
   useEffect(() => {
     setStatusBarStyle("light");
   }, []);
 
   useEffect(() => {
-    const checkToken = async () => {
-      try {
-        await SplashScreen.preventAutoHideAsync();
-        const token = await AsyncStorage.getItem("token");
+    setTimeout(async () => {
+      const token = await AsyncStorage.getItem("token");
 
-        setIsAuthenticated(!!token);
-        setIsTokenChecked(true);
-        // Use a timeout to ensure the component has mounted
-        setTimeout(async () => {
-          if (token) {
-            router.replace("/explore");
-          } else {
-            router.replace("/");
-          }
-          await SplashScreen.hideAsync();
-        }, 0);
-      } catch (error) {
-        console.error("Error checking token:", error);
+      setIsAuthenticated(!!token);
+      setIsTokenChecked(true);
+      if (token) {
+        console.log(token);
+        router.replace("/explore");
+      } else {
+        return null;
       }
-    };
-
-    checkToken();
+      SplashScreen.hideAsync();
+    }, 1000);
   }, []);
-  if (!isTokenChecked) {
-    return null;
-  }
-
-  const getLocalData = async () => {
-    const data = await AsyncStorage.getItem("title");
-    setTitle(data);
-  };
-  getLocalData();
 
   return (
     <Stack
@@ -105,6 +91,12 @@ export default function RootLayout() {
         }}
       />
       <Stack.Screen
+        name="settings/editProfile"
+        options={{
+          headerTitle: "Edit Profile",
+        }}
+      />
+      <Stack.Screen
         name="settings/otp/forgetPassword"
         options={{
           headerTitle: "Forgot Password",
@@ -126,18 +118,29 @@ export default function RootLayout() {
       <Stack.Screen
         name="coursesOverview/courseView"
         options={{
-          headerTitle: title ? title : "null",
-          headerRight: () => (
-            <TouchableOpacity>
-              <FontAwesome name="list" size={20} color={body.tertiary} />
-            </TouchableOpacity>
-          ),
+          headerTitle: message?.course?.title || "Course View",
         }}
       />
       <Stack.Screen
-        name="/payment"
+        name="coursesOverview/search"
+        options={{
+          headerTitle: "",
+          headerStyle: {
+            backgroundColor: body.tertiary,
+          },
+          headerTintColor: "black",
+        }}
+      />
+      <Stack.Screen
+        name="payments/payment"
         options={{
           headerTitle: "Enroll A course",
+        }}
+      />
+      <Stack.Screen
+        name="payments/paymentHistory"
+        options={{
+          headerTitle: "Payment History",
         }}
       />
     </Stack>

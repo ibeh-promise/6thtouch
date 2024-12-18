@@ -13,6 +13,7 @@ import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { setStatusBarStyle } from "expo-status-bar";
 import * as SplashScreen from "expo-splash-screen";
+import useClicksStore from "../store/clicksStore";
 import body from "@/constants/Colors";
 export default function TabLayout() {
   const router = useRouter();
@@ -23,6 +24,7 @@ export default function TabLayout() {
   const [activeTab, setActiveTab] = useState("explore");
 
   const currentRoute = segments[segments.length - 1];
+  const setMessage = useClicksStore((state) => state.setMessage);
 
   return (
     <Tabs
@@ -57,7 +59,9 @@ export default function TabLayout() {
                   justifyContent: "space-around",
                 }}
               >
-                <TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => router.navigate("/coursesOverview/search")}
+                >
                   <FontAwesome name="search" size={20} color={"white"} />
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -128,7 +132,9 @@ export default function TabLayout() {
                   alignItems: "center",
                 }}
               >
-                <TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => router.navigate("/coursesOverview/search")}
+                >
                   <FontAwesome name="search" size={20} color={"white"} />
                 </TouchableOpacity>
                 <TouchableOpacity

@@ -4,9 +4,10 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  RefreshControl,
   ScrollView,
   View,
+  Modal,
+  TextInput,
 } from "react-native";
 import { useState, useEffect } from "react";
 import { useRouter } from "expo-router";
@@ -17,10 +18,10 @@ import {
   MaterialIcons,
 } from "@expo/vector-icons";
 import RNRestart from "react-native-restart";
-import Footer from "@/components/Footer";
 import Courses from "@/components/Courses";
 import body from "@/constants/Colors";
 import useAuth from "@/hooks/useAuth";
+import useClicksStore from "../store/clicksStore";
 
 export default function Page() {
   const router = useRouter();
@@ -32,6 +33,7 @@ export default function Page() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [filter, setFilter] = useState(false);
+  const click = useClicksStore((state) => state.message);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,13 +48,13 @@ export default function Page() {
     const { courses } = useAuth();
     const data = await courses(setLoading, setError);
     setResponse(data);
-    setError(false)
+    setError(false);
   };
   const handleFetchCategories = async (categories) => {
     const { coursesCategories } = useAuth();
     const data = await coursesCategories(categories, setLoading, setError);
     setResponse(data);
-    setError(false)
+    setError(false);
   };
 
   const categoriesActive = (data) => {
@@ -206,16 +208,18 @@ export default function Page() {
             </View>
           </View>
         ) : (
-          <FlatList
-            data={response}
-            renderItem={(data) => (
-              <Courses
-                data={data.item}
-                setDisplayOverview={setDisplayOverview}
-                displayOverview={displayOverview}
-              />
-            )}
-          />
+          <>
+            <FlatList
+              data={response}
+              renderItem={(data) => (
+                <Courses
+                  data={data.item}
+                  setDisplayOverview={setDisplayOverview}
+                  displayOverview={displayOverview}
+                />
+              )}
+            />
+          </>
         )}
       </View>
       {/* <Footer page={page} setPage={setPage} /> */}

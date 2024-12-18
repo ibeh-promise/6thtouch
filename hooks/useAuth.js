@@ -138,6 +138,84 @@ const useAuth = () => {
     }
   };
 
+  const editProfile = async (firstName, lastName, email, setLoading) => {
+    if (!firstName && !lastName && !email) {
+      Alert.alert("Edit Profile Error", "please fill form before submission");
+    } else {
+      try {
+        setLoading(true);
+        const token = await AsyncStorage.getItem("token");
+        const response = await axios.patch(
+          "https://6thtouchsever.vercel.app/user/me",
+          {
+            firstName,
+            lastName,
+            email,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        Alert.alert("", response.data.message);
+
+        return response;
+      } catch (error) {
+        const errorMessage =
+          error.response?.data?.message ||
+          "An error occurred. Please try again.";
+        Alert.alert("Uploading Error", errorMessage);
+      } finally {
+        setLoading(false);
+        router.dismiss(2);
+      }
+    }
+  };
+
+  const changeAvatar = async (avatar, setLoading) => {
+    try {
+      setLoading(true);
+      if (!avatar) {
+        Alert.alert(
+          "Edit Profile Error",
+          "Please upload a file before submission"
+        );
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("avatar", {
+        uri: avatar, // File URI
+        name: "avatar.jpg", // File name
+        type: "image/jpeg", // MIME type
+      });
+
+      const token = await AsyncStorage.getItem("token");
+
+      const response = await axios.patch(
+        "https://6thtouchsever.vercel.app/user/changeAvatar",
+        formData, // Pass FormData directly
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      Alert.alert("Success", response.data.message || "Avatar updated!");
+      return response;
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || "An error occurred. Please try again.";
+      Alert.alert("Uploading Error", errorMessage);
+    } finally {
+      setLoading(false);
+      router.back();
+    }
+  };
+
   const changePassword = async (
     currentPassword,
     newPassword,
@@ -175,7 +253,6 @@ const useAuth = () => {
             }
           );
           Alert.alert("", response.data.message);
-
           return response;
         } catch (error) {
           Alert.alert("", "Network error");
@@ -328,6 +405,31 @@ const useAuth = () => {
       const id = await AsyncStorage.getItem("id");
       const token = await AsyncStorage.getItem("token");
       const response = await axios.get(
+        `https://6thtouchsever.vercel.app/courses/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("recieved data", response.data);
+      return response.data;
+      setError(false);
+    } catch (error) {
+      console.error(error.message);
+      if (error.message) {
+        setError(true);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+  const topicsByCourseId = async (setLoading, setError) => {
+    try {
+      setLoading(true);
+      const id = await AsyncStorage.getItem("id");
+      const token = await AsyncStorage.getItem("token");
+      const response = await axios.get(
         `https://6thtouchsever.vercel.app/courses/${id}/topics`,
         {
           headers: {
@@ -335,7 +437,7 @@ const useAuth = () => {
           },
         }
       );
-      console.log(response.data);
+      console.log("recieved data", response.data);
       return response.data;
       setError(false);
     } catch (error) {
@@ -371,6 +473,91 @@ const useAuth = () => {
       setLoading(false);
     }
   };
+  const createPayment = async (
+    courseId,
+    transactionId,
+    paymentReference,
+    setLoading,
+    setError
+  ) => {
+    try {
+      setLoading(true);
+      console.log(courseId, transactionId, paymentReference);
+      const token = await AsyncStorage.getItem("token");
+      const response = await axios.post(
+        "https://6thtouchsever.vercel.app/payments/create",
+        {
+          courseId,
+          transactionId,
+          paymentReference,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("Sent to backend", response.data);
+      return response.data;
+      setError(false);
+    } catch (error) {
+      console.error(error.message);
+      if (error.message) {
+        setError(true);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+const searchCourse = async (query, setLoading, setError) => {
+  setLoading(true); // Start loading
+  setError(false);  // Reset error state
+  
+  try {
+    // Validate query input
+    if (!query.trim()) {
+      Alert.alert("", "Make sure you are typing");
+      setLoading(false); // Stop loading if invalid
+      return;
+    }
+
+    const result = await axios.get(
+      `https://6thtouchsever.vercel.app/courses/search/?q=${encodeURIComponent(query.trim())}`
+    );
+    console.log("Search Result:", result.data); 
+    return result.data
+  } catch (error) {
+    console.error("Search Error:", error.response || error.message || error);
+    setError(true); 
+  } finally {
+    setLoading(false);
+  }
+};
+
+  const paymentHistory = async (setLoading, setError) => {
+    try {
+      setLoading(true);
+      const token = await AsyncStorage.getItem("token");
+      const response = await axios.get(
+        "https://6thtouchsever.vercel.app/payments/me",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("result ", response.data);
+      return response.data;
+      setError(false);
+    } catch (error) {
+      console.error(error.message);
+      if (error.message) {
+        setError(true);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return {
     signup,
@@ -378,12 +565,19 @@ const useAuth = () => {
     account,
     deleteAccount,
     changePassword,
+    editProfile,
+    changeAvatar,
     requestOtp,
     verifyOtp,
     resetPassword,
     courses,
     coursesCategories,
     coursesById,
+    topicsByCourseId,
+    myCourses,
+    createPayment,
+    searchCourse,
+    paymentHistory,
   };
 };
 
