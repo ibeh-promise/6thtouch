@@ -31,6 +31,23 @@ export default function Page() {
     };
     fetchData();
   }, []);
+
+  const handleFetch = async () => {
+    const { coursesById } = useAuth();
+    setLoading(true);
+    setError(false);
+
+    try {
+      const data = await coursesById(setLoading, setError);
+      console.log("Refreshed Data:", data);
+      setResponse(data);
+    } catch (err) {
+      console.error("Error refreshing data:", err);
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
   const getItem = async () => {
     try {
       const data = await AsyncStorage.getItem("title");
@@ -90,7 +107,12 @@ export default function Page() {
           </View>
           <View style={{ width: "100%", position: "absolute", bottom: 30 }}>
             {response.isPaid ? (
-              <TouchableOpacity style={styles.button}>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => {
+                  router.navigate("/payments/payment");
+                }}
+              >
                 <Text style={styles.enrollText}>Enroll Now</Text>
               </TouchableOpacity>
             ) : (

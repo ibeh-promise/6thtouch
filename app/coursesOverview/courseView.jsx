@@ -5,9 +5,10 @@ import {
   View,
   ScrollView,
   FlatList,
-  Modal,
+  Alert,
   TouchableOpacity,
   ActivityIndicator,
+  Modal,
 } from "react-native";
 import body from "@/constants/Colors";
 import { FontAwesome, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
@@ -16,6 +17,7 @@ import useAuth from "@/hooks/useAuth";
 import { useRouter } from "expo-router";
 import { Video } from "expo-av";
 import * as Speech from "expo-speech";
+import useTitleStore from "../store/titleStore";
 
 export default function Page() {
   const router = useRouter();
@@ -26,11 +28,16 @@ export default function Page() {
   const [progress, setProgress] = useState(0);
   const [play, setPlay] = useState(false);
   const [isDone, setIsDone] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const setMessage = useTitleStore((state) => state.setMessage);
+
   useEffect(() => {
     const fetchData = async () => {
-      const { coursesById } = useAuth();
-      const data = await coursesById(setLoading, setError);
+      const { topicsByCourseId } = useAuth();
+      const data = await topicsByCourseId(setLoading, setError);
+      setTitle(data[progress]?.course?.title);
       setResponse(data);
+      setMessage(data[progress]);
       setError(false);
       console.log("data overview", data);
       if (data.length === 0) {
@@ -40,23 +47,11 @@ export default function Page() {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    const getItem = async () => {
-      try {
-        const data = await AsyncStorage.getItem("title");
-        setTitle(data);
-        console.log(data);
-      } catch (error) {
-        console.error("Error fetching title:", error);
-      }
-    };
-    getItem();
-  }, []);
-
   const handleFetch = async () => {
-    const { coursesById } = useAuth();
-    const data = await coursesById(setLoading, setError);
+    const { topicsByCourseId } = useAuth();
+    const data = await topicsByCourseId(setLoading, setError);
     setResponse(data);
+    setMessage(response[progress]?.course?.title);
     console.log("data overview", data);
     if (data.length === 0) {
       setIsDone(true);
@@ -116,17 +111,84 @@ export default function Page() {
           <View
             style={{ width: "100%", paddingHorizontal: 20, paddingTop: 30 }}
           >
-            <Text style={{ color: "white", fontWeight: 800, fontSize: 20 }}>
-              {response[progress]?.title}
-            </Text>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                padding: 5,
+              }}
+            >
+              <Text style={{ color: "white", fontWeight: 800, fontSize: 20 }}>
+                {response[progress]?.title}
+              </Text>
+              <TouchableOpacity onPress={() => setIsMenuOpen(true)}>
+                <FontAwesome name="list" size={25} color={body.tertiary} />
+              </TouchableOpacity>
+              {isMenuOpen && (
+                <Modal transparent={true}>
+                  <View
+                    style={styles.modalContainer}
+                    onPress={() => {
+                      setIsMenuOpen(false);
+                    }}
+                  >
+                    <View style={styles.modalContent}>
+                      <Text
+                        style={{
+                          color: body.dominant,
+                          fontSize: 20,
+                          paddingVertical: 20,
+                          paddingHorizontal: 10,
+                          borderBottomWidth: 1,
+                        }}
+                      >
+                        Lessons
+                      </Text>
+                      <FlatList
+                        data={response}
+                        keyExtractor={(item, index) => index.toString()}
+                        renderItem={({ item, index }) => (
+                          <TouchableOpacity
+                            style={{
+                              paddingHorizontal: 10,
+                              paddingVertical: 20,
+                              borderBottomWidth: 1,
+                              borderColor: body.dominant,
+                            }}
+                            onPress={() => {
+                              setProgress(index);
+                              setIsMenuOpen(false);
+                            }}
+                          >
+                            <Text style={{ fontWeight: 600 }}>
+                              {item?.title}
+                            </Text>
+                          </TouchableOpacity>
+                        )}
+                      />
+                    </View>
+                    <TouchableOpacity
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        backgroundColor: "transparent",
+                      }}
+                      onPress={() => setIsMenuOpen(false)}
+                    ></TouchableOpacity>
+                  </View>
+                </Modal>
+              )}
+            </View>
             {response[progress]?.video && (
               <Video
+                posterSource={{ uri: response[progress]?.thumbnail }}
                 source={{ uri: response[progress]?.video }}
                 style={styles.video}
                 resizeMode="contain"
                 useNativeControls
-                onLoadStart={() => console.log("Loading video...")}
-                onLoad={() => console.log("Video loaded successfully")}
+                onLoadStart={() => console.log("Video loaded successfully")}
+                onLoad={() => console.log("Loading video...")}
                 onError={(error) => console.log("Video error:", error)}
               />
             )}
@@ -159,43 +221,6 @@ export default function Page() {
               <View style={styles.contentContainer}>
                 <Text style={styles.contentText}>
                   {response[progress]?.note}{" "}
-                </Text>
-                <Text style={styles.contentText}>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde
-                  corporis repudiandae vel aut, dolorum nobis veritatis itaque
-                  deleniti sint, dicta cupiditate numquam impedit consequatur ad
-                  fuga quas? Tempora, repellendus pariatur! Lorem ipsum dolor
-                  sit amet consectetur adipisicing elit. Unde corporis
-                  repudiandae vel aut, dolorum nobis veritatis itaque deleniti
-                  sint, dicta cupiditate numquam impedit consequatur ad fuga
-                  quas? Tempora, repellendus pariatur! Lorem ipsum dolor sit
-                  amet consectetur adipisicing elit. Unde corporis repudiandae
-                  vel aut, dolorum nobis veritatis itaque deleniti sint, dicta
-                  cupiditate numquam impedit consequatur ad fuga quas? Tempora,
-                  repellendus pariatur! Lorem ipsum dolor sit amet consectetur
-                  adipisicing elit. Unde corporis repudiandae vel aut, dolorum
-                  nobis veritatis itaque deleniti sint, dicta cupiditate numquam
-                  impedit consequatur ad fuga quas? Tempora, repellendus
-                  pariatur! Lorem ipsum dolor sit amet consectetur adipisicing
-                  elit. Unde corporis repudiandae vel aut, dolorum nobis
-                  veritatis itaque deleniti sint, dicta cupiditate numquam
-                  impedit consequatur ad fuga quas? Tempora, repellendus
-                  pariatur! impedit consequatur ad fuga quas? Tempora,
-                  repellendus pariatur! Lorem ipsum dolor sit amet consectetur
-                  adipisicing elit. Unde corporis repudiandae vel aut, dolorum
-                  nobis veritatis itaque deleniti sint, dicta cupiditate numquam
-                  impedit consequatur ad fuga quas? Tempora, repellendus
-                  pariatur! Lorem ipsum dolor sit amet consectetur adipisicing
-                  elit. Unde corporis repudiandae vel aut, dolorum nobis
-                  veritatis itaque deleniti sint, dicta cupiditate numquam
-                  impedit consequatur ad fuga quas? Tempora, repellendus
-                  pariatur! Lorem ipsum dolor sit amet consectetur adipisicing
-                  elit. Unde corporis repudiandae vel aut, dolorum nobis
-                  veritatis itaque deleniti sint, dicta cupiditate numquam
-                  impedit consequatur ad fuga quas? Tempora, repellendus
-                  pariatur! Lorem ipsum dolor sit amet consectetur adipisicing
-                  elit. Unde corporis repudiandae vel aut, dolorum nobis
-                  pariatur!
                 </Text>
               </View>
               <View style={styles.btnCta}>
@@ -350,5 +375,28 @@ const styles = StyleSheet.create({
   },
   spacing: {
     marginTop: 10,
+  },
+  modalContainer: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "flex-end",
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
+  },
+
+  modalContent: {
+    width: 250,
+    height: "100%",
+    backgroundColor: body.tertiary,
+    marginRight: 10,
+    borderRadius: 5,
+    paddingTop: 20,
+  },
+  modalContentBtn: {
+    width: "100%",
+    padding: 10,
+    justifyContent: "center",
   },
 });

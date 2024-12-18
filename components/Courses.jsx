@@ -10,7 +10,8 @@ export default function Courses({ data, displayOverview, setDisplayOverview }) {
   const handleEnroll = async () => {
     try {
       await AsyncStorage.setItem("id", data.id);
-      router.navigate("/payment");
+      console.log(data.id)
+      router.navigate("/coursesOverview/overview");
     } catch (error) {
       throw error;
     }
@@ -149,7 +150,6 @@ const styles = StyleSheet.create({
     borderColor: body.recessive,
     padding: 10,
     paddingHorizontal: 20,
-
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 5,

@@ -14,7 +14,6 @@ import {
   FontAwesome6,
   MaterialIcons,
 } from "@expo/vector-icons";
-import Footer from "@/components/Footer";
 import MyCourses from "@/components/MyCourses";
 import { router } from "expo-router";
 import useAuth from "@/hooks/useAuth";
@@ -28,24 +27,24 @@ export default function Page() {
   const [isActive, setIsActive] = useState("all");
   useEffect(() => {
     const fetchData = async () => {
-      const { courses } = useAuth();
-      const data = await courses(setLoading, setError);
+      const { myCourses } = useAuth();
+      const data = await myCourses(setLoading, setError);
       setResponse(data);
     };
     fetchData();
   }, []);
 
   const handleFetch = async () => {
-    const { courses } = useAuth();
-    const data = await courses(setLoading, setError);
+    const { myCourses } = useAuth();
+    const data = await myCourses(setLoading, setError);
     setResponse(data);
     setError(false);
   };
-  const handleFetchCategories = async (categories) => {
-    const { coursesCategories } = useAuth();
-    const data = await coursesCategories(categories, setLoading, setError);
-    setResponse(data);
-  };
+  // const handleFetchCategories = async (categories) => {
+  //   const { coursesCategories } = useAuth();
+  //   const data = await coursesCategories(categories, setLoading, setError);
+  //   setResponse(data);
+  // };
   const categoriesActive = (data) => {
     if (isActive == data) return styles.active;
   };
@@ -77,64 +76,6 @@ export default function Page() {
                   All Categories
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  setIsActive("robot");
-                  handleFetchCategories("Robotics");
-                }}
-                style={[categoriesActive("robot"), styles.categoriesContent]}
-              >
-                <FontAwesome5
-                  name="robot"
-                  size={20}
-                  color={isActive == "robot" ? body.tertiary : body.textDark}
-                />
-                <Text style={[categoriesTextActive("robot")]}> Robotics</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.categoriesAlignment}>
-              <TouchableOpacity
-                onPress={() => {
-                  setIsActive("webd");
-                  handleFetchCategories("Coding");
-                }}
-                style={[categoriesActive("webd"), styles.categoriesContent]}
-              >
-                <FontAwesome5
-                  name="laptop-code"
-                  size={20}
-                  color={isActive == "webd" ? body.tertiary : body.textDark}
-                />
-                <Text style={[categoriesTextActive("webd")]}>
-                  {" "}
-                  Web Development
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  setIsActive("pd");
-                  handleFetchCategories("Robotics");
-                }}
-                style={[categoriesActive("pd"), styles.categoriesContent]}
-              >
-                <FontAwesome5
-                  name="laptop-code"
-                  size={20}
-                  color={isActive == "pd" ? body.tertiary : body.textDark}
-                />
-                <Text style={[categoriesTextActive("pd")]}>
-                  {" "}
-                  Product Designing
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  setFilter(false);
-                }}
-                style={{ position: "absolute", bottom: 0, left: -20 }}
-              >
-                <MaterialIcons name="close" size={20} color={body.textDark} />
-              </TouchableOpacity>
             </View>
           </View>
         ) : (
@@ -164,14 +105,14 @@ export default function Page() {
                   All Categories
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 onPress={() => {
                   setFilter(true);
                 }}
                 style={styles.categoriesContent}
               >
                 <FontAwesome6 name="sort" size={20} color={body.textDark} />
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
           </View>
         )}
@@ -222,7 +163,7 @@ const styles = StyleSheet.create({
     backgroundColor: body.tertiary,
     padding: 20,
     flexDirection: "row",
-    justifyContent: "space-around",
+    // justifyContent: "space-around",
     borderBottomWidth: 1,
     borderBottomColor: body.dominant,
     marginBottom: 10,

@@ -1,12 +1,13 @@
 import {
   Alert,
-  FlatList,
   StyleSheet,
+  Image,
   Text,
   TouchableOpacity,
   View,
   ScrollView,
   ActivityIndicator,
+  ImageBackground,
 } from "react-native";
 import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -19,18 +20,18 @@ import {
   MaterialIcons,
 } from "@expo/vector-icons";
 import { router } from "expo-router";
+import * as ImagePicker from "expo-image-picker";
 import useAuth from "@/hooks/useAuth";
+import * as ImageManipulator from "expo-image-manipulator";
 
 export default function Page() {
-  const { account } = useAuth();
+  const { account, changeAvatar } = useAuth();
   const [userFirstName, setUserFirstName] = useState(null);
   const [userLastName, setUserLastName] = useState(null);
   const [userEmail, setUserEmail] = useState(null);
-  const [page, setPage] = useState("");
-  const [displayOverview, setDisplayOverview] = useState(false);
+  const [userAvatar, setUserAvatar] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [isActive, setIsActive] = useState("all");
-
+  const [file, setFile] = useState(null);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -38,6 +39,8 @@ export default function Page() {
         setUserFirstName(data.firstName);
         setUserLastName(data.lastName);
         setUserEmail(data.email);
+        setUserAvatar(data.avatar);
+
         await AsyncStorage.setItem("userData", JSON.stringify(data));
       } catch (err) {
         console.error("Fetching online data failed:", err);
@@ -48,6 +51,7 @@ export default function Page() {
             setUserFirstName(parsedData.firstName);
             setUserLastName(parsedData.lastName);
             setUserEmail(parsedData.email);
+            setUserAvatar(parsedData.avatar);
           }
         } catch (parseError) {
           console.error("Error retrieving cached data:", parseError);
@@ -77,6 +81,48 @@ export default function Page() {
     ]);
   };
 
+  const pickImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (status !== "granted") {
+      Alert.alert(
+        "Permission Denied",
+        "Sorry, we need camera roll permissions to upload images."
+      );
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 1, // Original quality
+    });
+
+    if (!result.cancelled) {
+      try {
+        // Compress image
+        const compressedImage = await ImageManipulator.manipulateAsync(
+          result.assets[0].uri,
+          [{ resize: { width: 800 } }], // Resize to a width of 800px (maintains aspect ratio)
+          { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG } // Compress and save as JPEG
+        );
+
+        console.log("Compressed Image URI:", compressedImage.uri);
+
+        // Send the compressed image to the server
+        setFile(compressedImage.uri);
+        const response = await changeAvatar(compressedImage.uri, setLoading);
+
+        if (response.success) {
+          setUserAvatar(response.avatarUrl); // Update avatar in UI
+          Alert.alert("Success", "Avatar updated successfully.");
+        }
+      } catch (err) {
+        console.error("Error uploading avatar:", err);
+      }
+    }
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView style={styles.topContainer}>
@@ -89,27 +135,41 @@ export default function Page() {
         ) : (
           <View style={styles.mainContainer}>
             <View style={{ flexDirection: "row", alignItems: "baseline" }}>
-              <View style={styles.userIconCta}>
-                <FontAwesome name="user-circle" size={150} color={"grey"} />
-              </View>
-              <View style={styles.editCta}>
+              {userAvatar == null ? (
+                <View style={styles.userIconCta}>
+                  <FontAwesome name="user-circle" size={150} color={"grey"} />
+                </View>
+              ) : (
+                <Image
+                  source={{ uri: userAvatar }}
+                  style={styles.userIconCta}
+                />
+              )}
+              <TouchableOpacity style={styles.editCta} onPress={pickImage}>
                 <MaterialCommunityIcons
                   name="camera"
                   size={30}
                   color={"white"}
                   style={styles.editIcon}
                 />
-              </View>
+              </TouchableOpacity>
             </View>
+
             <Text style={styles.userName}>
               {userLastName} {userFirstName}
             </Text>
             <Text style={styles.userEmail}>{userEmail}</Text>
-            <TouchableOpacity style={styles.editBtn}>
+            <TouchableOpacity
+              style={styles.editBtn}
+              onPress={() => router.navigate("settings/editProfile")}
+            >
               <Text style={styles.editBtnText}>Edit Profile</Text>
             </TouchableOpacity>
             <View style={{ width: "90%" }}>
-              <TouchableOpacity style={styles.profileContent}>
+              <TouchableOpacity
+                style={styles.profileContent}
+                onPress={() => router.navigate("/payments/paymentHistory")}
+              >
                 <View
                   style={{
                     flexDirection: "row",
