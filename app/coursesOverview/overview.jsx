@@ -4,7 +4,7 @@ import {
   View,
   ScrollView,
   FlatList,
-  Modal,
+  Image,
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
@@ -81,18 +81,7 @@ export default function Page() {
           <View style={{ width: "100%" }}>
             <Text style={styles.contentText}>{title}</Text>
           </View>
-          <Video
-            source={{
-              uri: response.thumbnailVideo,
-            }}
-            style={styles.video}
-            resizeMode="contain"
-            useNativeControls
-            shouldPlay
-            onLoadStart={() => console.log("Loading video...")}
-            onLoad={() => console.log("Video loaded successfully")}
-            onError={(error) => console.log("Video error:", error)}
-          />
+          <Image source={{ uri: response.thumbnail }} style={styles.image} />
           <View style={styles.OverviewContainer}>
             <FlatList
               data={response.topics}
@@ -153,9 +142,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 20,
   },
-  video: {
+  image: {
     width: "100%",
     height: 300,
+    marginBottom: 10,
+    borderRadius: 10,
   },
   OverviewContainer: {
     backgroundColor: body.complementary,
