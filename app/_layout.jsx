@@ -12,29 +12,28 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isTokenChecked, setIsTokenChecked] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   const message = useTitleStore((state) => state.message);
+
   useEffect(() => {
     setStatusBarStyle("light");
-  }, []);
-
-  useEffect(() => {
     setTimeout(async () => {
       const token = await AsyncStorage.getItem("token");
-
-      setIsAuthenticated(!!token);
+      setIsAuthenticated(true);
+      if (token) router.navigate("/explore");
       setIsTokenChecked(true);
-      if (token) {
-        console.log(token);
-        router.replace("/explore");
-      } else {
-        return null;
-      }
-      SplashScreen.hideAsync();
-    }, 1000);
+    }, 2000);
   }, []);
+
+  if (isTokenChecked) {
+    setTimeout(() => {
+      SplashScreen.hideAsync();
+    }, 2000);
+  }
 
   return (
     <Stack
@@ -147,6 +146,12 @@ export default function RootLayout() {
         name="reports/report"
         options={{
           headerTitle: "Report a bug",
+        }}
+      />
+      <Stack.Screen
+        name="settings/help/helpCenter"
+        options={{
+          headerTitle: "Help Center",
         }}
       />
     </Stack>

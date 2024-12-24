@@ -20,13 +20,14 @@ export default function Page() {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [userAvatar, setUserAvatar] = useState(null);
+  const [response, setResponse] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   useEffect(() => {
     const fetchData = async () => {
       const { account } = useAuth();
       const data = await account(setLoading, setError);
-      setUserAvatar(data.avatar);
+      setResponse(data);
     };
     fetchData();
   }, []);
@@ -39,21 +40,21 @@ export default function Page() {
   return (
     <View style={styles.container}>
       <View style={styles.container2}>
-        <Image style={styles.uploadCta} source={{ uri: userAvatar }} />
+        <Image style={styles.uploadCta} source={{ uri: response?.avatar }} />
         <View style={styles.formCta}>
           <TextInput
             style={styles.input}
-            placeholder="First Name"
+            value={response?.firstName}
             onChangeText={(text) => setFirstName(text)}
           />
           <TextInput
             style={styles.input}
-            placeholder="Last Name"
+            value={response?.lastName}
             onChangeText={(text) => setLastName(text)}
           />
           <TextInput
             style={styles.input}
-            placeholder="Email"
+            value={response?.email}
             onChangeText={(text) => setEmail(text)}
           />
 

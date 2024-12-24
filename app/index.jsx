@@ -12,8 +12,11 @@ import {
 import { useState } from "react";
 import { useRouter } from "expo-router";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as SplashScreen from "expo-splash-screen";
 import useAuth from "@/hooks/useAuth";
 import body from "@/constants/Colors";
+
 export default function Page() {
   const router = useRouter();
   const [email, setEmail] = useState("");

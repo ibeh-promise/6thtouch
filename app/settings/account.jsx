@@ -194,7 +194,10 @@ export default function Page() {
                   size={20}
                 />
               </TouchableOpacity>
-              <TouchableOpacity style={styles.profileContent}>
+              <TouchableOpacity
+                style={styles.profileContent}
+                onPress={() => router.navigate("/settings/help/helpCenter")}
+              >
                 <View
                   style={{
                     flexDirection: "row",
