@@ -23,54 +23,26 @@ export default function Page() {
   return (
     <View style={styles.container}>
       <View style={styles.container2}>
-        <Text style={styles.textTitle}>How Can We Help?</Text>
-        {/* <View style={styles.passwordInputContainer}>
-          <TextInput
-            style={styles.passwordInput}
-            placeholder="Search Help Center "
-          />
-          <FontAwesome
-            name={"search"}
-            color="black"
-            size={18}
-            style={styles.eyeIcon}
-          />
-        </View> */}
+        <Text style={styles.textTitle}>Troubleshooting</Text>
+
         <Text style={{ fontWeight: 800, marginBottom: 20 }}>Help Topics</Text>
         <TouchableOpacity
           style={styles.helpContent}
-          onPress={() => router.navigate("/settings/help/getStarted/")}
+          onPress={() =>
+            router.navigate("/settings/help/troubleshoot/commonIssues")
+          }
         >
-          <FontAwesome name="flag" size={18} />
-          <Text style={styles.helpContentText}>Get Started</Text>
+          <FontAwesome name="book" size={18} />
+          <Text style={styles.helpContentText}>Common Issues</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.helpContent}
-          onPress={() => router.navigate("/settings/help/courses/")}
+          onPress={() =>
+            router.navigate("/settings/help/troubleshoot/contactSupport")
+          }
         >
-          <FontAwesome name="laptop" size={18} />
-          <Text style={styles.helpContentText}>Courses</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.helpContent}
-          onPress={() => router.navigate("/settings/help/FAQs/")}
-        >
-          <FontAwesome name="question" size={20} />
-          <Text style={styles.helpContentText}>FAQs</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.helpContent}
-          onPress={() => router.navigate("/settings/help/troubleshoot/")}
-        >
-          <MaterialIcons name="troubleshoot" size={20} />
-          <Text style={styles.helpContentText}>Troubleshooting</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.helpContent}
-          onPress={() => router.navigate("/settings/help/advanceHelpTopics/")}
-        >
-          <MaterialIcons name="topic" size={20} />
-          <Text style={styles.helpContentText}>Advance help topics</Text>
+          <FontAwesome name="book" size={18} />
+          <Text style={styles.helpContentText}>Contact Support</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -119,7 +91,7 @@ const styles = StyleSheet.create({
   },
   helpContent: {
     flexDirection: "row",
-    width: 220,
+    width: 260,
     alignItems: "center",
     paddingHorizontal: 10,
     paddingVertical: 20,

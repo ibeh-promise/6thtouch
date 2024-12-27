@@ -371,7 +371,7 @@ const useAuth = () => {
     } catch (error) {
       console.error(error.message);
       if (error.message) {
-        setError(error);
+        setError(true);
       }
     } finally {
       setLoading(false);
@@ -465,7 +465,10 @@ const useAuth = () => {
       return response.data;
       setError(false);
     } catch (error) {
-      console.error(error.message);
+      console.error(error.response);
+      const errorMessage =
+        error.response?.data?.message || "An error occurred. Please try again.";
+      Alert.alert("Fetching Data Error", errorMessage);
       if (error.message) {
         setError(true);
       }
@@ -523,6 +526,36 @@ const searchCourse = async (query, setLoading, setError) => {
 
     const result = await axios.get(
       `https://6thtouchsever.vercel.app/courses/search/?q=${encodeURIComponent(query.trim())}`
+    );
+    console.log("Search Result:", result.data); 
+    return result.data
+  } catch (error) {
+    console.error("Search Error:", error.response || error.message || error);
+    setError(true); 
+  } finally {
+    setLoading(false);
+  }
+};
+const searchMyCourses = async (query, setLoading, setError) => {
+  setLoading(true); // Start loading
+  setError(false);  // Reset error state
+  
+  try {
+    // Validate query input
+    if (!query.trim()) {
+      Alert.alert("", "Make sure you are typing");
+      setLoading(false); // Stop loading if invalid
+      return;
+    }
+    const token = await AsyncStorage.getItem("token");
+
+    const result = await axios.get(
+      `https://6thtouchsever.vercel.app/courses/myCourses/search/?q=${encodeURIComponent(query.trim())}`,
+       {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
     );
     console.log("Search Result:", result.data); 
     return result.data
@@ -615,6 +648,7 @@ const searchCourse = async (query, setLoading, setError) => {
     myCourses,
     createPayment,
     searchCourse,
+    searchMyCourses,
     paymentHistory,
     createReport,
   };

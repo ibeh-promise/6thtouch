@@ -99,7 +99,7 @@ export default function Page() {
 
         <TouchableOpacity
           style={styles.profileContent}
-          onPress={() => router.navigate("/settings/settings")}
+          onPress={() => router.navigate("/settings/about")}
         >
           <View
             style={{

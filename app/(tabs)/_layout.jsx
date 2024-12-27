@@ -133,7 +133,7 @@ export default function TabLayout() {
                 }}
               >
                 <TouchableOpacity
-                  onPress={() => router.navigate("/coursesOverview/search")}
+                  onPress={() => router.navigate("/coursesOverview/mySearch")}
                 >
                   <FontAwesome name="search" size={20} color={"white"} />
                 </TouchableOpacity>

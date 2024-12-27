@@ -23,54 +23,44 @@ export default function Page() {
   return (
     <View style={styles.container}>
       <View style={styles.container2}>
-        <Text style={styles.textTitle}>How Can We Help?</Text>
-        {/* <View style={styles.passwordInputContainer}>
-          <TextInput
-            style={styles.passwordInput}
-            placeholder="Search Help Center "
-          />
-          <FontAwesome
-            name={"search"}
-            color="black"
-            size={18}
-            style={styles.eyeIcon}
-          />
-        </View> */}
+        <Text style={styles.textTitle}>Get Started</Text>
+
         <Text style={{ fontWeight: 800, marginBottom: 20 }}>Help Topics</Text>
         <TouchableOpacity
           style={styles.helpContent}
-          onPress={() => router.navigate("/settings/help/getStarted/")}
+          onPress={() =>
+            router.navigate("/settings/help/getStarted/introduction")
+          }
         >
-          <FontAwesome name="flag" size={18} />
-          <Text style={styles.helpContentText}>Get Started</Text>
+          <FontAwesome name="book" size={18} />
+          <Text style={styles.helpContentText}>Introduction to 6thtouch</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() =>
+            router.navigate("/settings/help/getStarted/creatingAnAccount")
+          }
+          style={styles.helpContent}
+        >
+          <FontAwesome name="book" size={18} />
+          <Text style={styles.helpContentText}>Creating an account</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.helpContent}
-          onPress={() => router.navigate("/settings/help/courses/")}
+          onPress={() =>
+            router.navigate("/settings/help/getStarted/navigatingTheApp")
+          }
         >
-          <FontAwesome name="laptop" size={18} />
-          <Text style={styles.helpContentText}>Courses</Text>
+          <FontAwesome name="book" size={20} />
+          <Text style={styles.helpContentText}>Navigating the App</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.helpContent}
-          onPress={() => router.navigate("/settings/help/FAQs/")}
+          onPress={() =>
+            router.navigate("/settings/help/getStarted/personalizingAccount")
+          }
         >
-          <FontAwesome name="question" size={20} />
-          <Text style={styles.helpContentText}>FAQs</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.helpContent}
-          onPress={() => router.navigate("/settings/help/troubleshoot/")}
-        >
-          <MaterialIcons name="troubleshoot" size={20} />
-          <Text style={styles.helpContentText}>Troubleshooting</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.helpContent}
-          onPress={() => router.navigate("/settings/help/advanceHelpTopics/")}
-        >
-          <MaterialIcons name="topic" size={20} />
-          <Text style={styles.helpContentText}>Advance help topics</Text>
+          <FontAwesome name="book" size={20} />
+          <Text style={styles.helpContentText}>Personalizing Your Account</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -119,7 +109,7 @@ const styles = StyleSheet.create({
   },
   helpContent: {
     flexDirection: "row",
-    width: 220,
+    width: 300,
     alignItems: "center",
     paddingHorizontal: 10,
     paddingVertical: 20,
