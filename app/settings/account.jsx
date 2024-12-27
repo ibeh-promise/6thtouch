@@ -196,31 +196,6 @@ export default function Page() {
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.profileContent}
-                onPress={() => router.navigate("/settings/help/helpCenter")}
-              >
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    width: 135,
-                  }}
-                >
-                  <FontAwesome6
-                    name="question"
-                    style={{ color: body.textDark }}
-                    size={20}
-                  />
-                  <Text style={styles.profileContentText}> Help & Support</Text>
-                </View>
-                <MaterialIcons
-                  name="keyboard-arrow-right"
-                  style={{ color: body.textDark }}
-                  size={20}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.profileContent}
                 onPress={() => router.navigate("/settings/settings")}
               >
                 <View
@@ -237,6 +212,31 @@ export default function Page() {
                     size={20}
                   />
                   <Text style={styles.profileContentText}> Settings</Text>
+                </View>
+                <MaterialIcons
+                  name="keyboard-arrow-right"
+                  style={{ color: body.textDark }}
+                  size={20}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.profileContent}
+                onPress={() => router.navigate("/settings/help/helpCenter")}
+              >
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    width: 135,
+                  }}
+                >
+                  <FontAwesome6
+                    name="question"
+                    style={{ color: body.textDark }}
+                    size={20}
+                  />
+                  <Text style={styles.profileContentText}> Help & Support</Text>
                 </View>
                 <MaterialIcons
                   name="keyboard-arrow-right"

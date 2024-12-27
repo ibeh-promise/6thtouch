@@ -24,7 +24,7 @@ export default function RootLayout() {
     setTimeout(async () => {
       const token = await AsyncStorage.getItem("token");
       setIsAuthenticated(true);
-      if (token) router.navigate("/explore");
+      if (token) router.replace("/explore");
       setIsTokenChecked(true);
     }, 2000);
   }, []);
@@ -131,6 +131,16 @@ export default function RootLayout() {
         }}
       />
       <Stack.Screen
+        name="coursesOverview/mySearch"
+        options={{
+          headerTitle: "",
+          headerStyle: {
+            backgroundColor: body.tertiary,
+          },
+          headerTintColor: "black",
+        }}
+      />
+      <Stack.Screen
         name="payments/payment"
         options={{
           headerTitle: "Enroll A course",
@@ -149,7 +159,109 @@ export default function RootLayout() {
         }}
       />
       <Stack.Screen
+        name="settings/about"
+        options={{
+          headerTitle: "About us",
+        }}
+      />
+      <Stack.Screen
         name="settings/help/helpCenter"
+        options={{
+          headerTitle: "Help Center",
+        }}
+      />
+      <Stack.Screen
+        name="settings/help/getStarted/index"
+        options={{
+          headerTitle: "Help Center",
+        }}
+      />
+      <Stack.Screen
+        name="settings/help/getStarted/introduction"
+        options={{
+          headerTitle: "Help Center",
+        }}
+      />
+      <Stack.Screen
+        name="settings/help/getStarted/creatingAnAccount"
+        options={{
+          headerTitle: "Help Center",
+        }}
+      />
+      <Stack.Screen
+        name="settings/help/getStarted/navigatingTheApp"
+        options={{
+          headerTitle: "Help Center",
+        }}
+      />
+      <Stack.Screen
+        name="settings/help/getStarted/personalizingAccount"
+        options={{
+          headerTitle: "Help Center",
+        }}
+      />
+      <Stack.Screen
+        name="settings/help/courses/index"
+        options={{
+          headerTitle: "Help Center",
+        }}
+      />
+      <Stack.Screen
+        name="settings/help/courses/enrollCourse"
+        options={{
+          headerTitle: "Help Center",
+        }}
+      />
+      <Stack.Screen
+        name="settings/help/courses/accessCourseMaterial"
+        options={{
+          headerTitle: "Help Center",
+        }}
+      />
+      <Stack.Screen
+        name="settings/help/courses/trackingProgress"
+        options={{
+          headerTitle: "Help Center",
+        }}
+      />
+      <Stack.Screen
+        name="settings/help/FAQs/index"
+        options={{
+          headerTitle: "Help Center",
+        }}
+      />
+      <Stack.Screen
+        name="settings/help/troubleshoot/index"
+        options={{
+          headerTitle: "Help Center",
+        }}
+      />
+      <Stack.Screen
+        name="settings/help/troubleshoot/commonIssues"
+        options={{
+          headerTitle: "Help Center",
+        }}
+      />
+      <Stack.Screen
+        name="settings/help/troubleshoot/contactSupport"
+        options={{
+          headerTitle: "Help Center",
+        }}
+      />
+      <Stack.Screen
+        name="settings/help/advanceHelpTopics/index"
+        options={{
+          headerTitle: "Help Center",
+        }}
+      />
+      <Stack.Screen
+        name="settings/help/advanceHelpTopics/changePassword"
+        options={{
+          headerTitle: "Help Center",
+        }}
+      />
+      <Stack.Screen
+        name="settings/help/advanceHelpTopics/forgetPassword"
         options={{
           headerTitle: "Help Center",
         }}

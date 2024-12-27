@@ -16,6 +16,7 @@
     "app/(tabs)/*.jsx",
     "app/settings/otp/*.jsx",
     "app/settings/*/*.jsx",
-    "app/*/*.jsx"
+    "app/*/*.jsx",
+    "app/*/*/*.jsx",
 ]
 }
