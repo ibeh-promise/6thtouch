@@ -87,6 +87,7 @@ export default function Page() {
               data={response.topics}
               renderItem={({ item }) => (
                 <ScrollView>
+                  <Text style={{ color: body.tertiary }}>Course Topics</Text>
                   <View style={styles.contentContainer}>
                     <Text style={styles.contentText}>{item.title}</Text>
                   </View>
@@ -99,19 +100,19 @@ export default function Page() {
               <TouchableOpacity
                 style={styles.button}
                 onPress={() => {
-                  router.navigate("/payments/payment");
+                  router.navigate("/coursesOverview/courseView");
                 }}
               >
-                <Text style={styles.enrollText}>Enroll Now</Text>
+                <Text style={styles.enrollText}>Start Learning</Text>
               </TouchableOpacity>
             ) : (
               <TouchableOpacity
                 style={styles.button}
                 onPress={() => {
-                  router.navigate("/coursesOverview/courseView");
+                  router.navigate("/payments/payment");
                 }}
               >
-                <Text style={styles.enrollText}>Start Learning</Text>
+                <Text style={styles.enrollText}>Enroll Now</Text>
               </TouchableOpacity>
             )}
           </View>

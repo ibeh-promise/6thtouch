@@ -501,6 +501,18 @@ const useAuth = () => {
         }
       );
       console.log("Sent to backend", response.data);
+      const response2 = await axios.post(
+        "https://6thtouchsever.vercel.app/courses/free/add",
+        {
+          courseId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("Added course", response2.data);
       return response.data;
       setError(false);
     } catch (error) {

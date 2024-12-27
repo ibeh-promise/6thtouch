@@ -7,10 +7,11 @@ import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Courses({ data, displayOverview, setDisplayOverview }) {
+  const [isDiscriptionOpen, setIsDiscriptionOpen] = useState(false);
   const handleEnroll = async () => {
     try {
       await AsyncStorage.setItem("id", data.id);
-      console.log(data.id)
+      console.log(data.id);
       router.navigate("/coursesOverview/overview");
     } catch (error) {
       throw error;
@@ -85,15 +86,21 @@ export default function Courses({ data, displayOverview, setDisplayOverview }) {
               {data.subscribers.length}
             </Text>
           </View>
+          {isDiscriptionOpen && (
+            <Text style={{ color: body.textDark }}>{data.description}</Text>
+          )}
           <View style={styles.btnContainer}>
             <TouchableOpacity style={styles.button1} onPress={handleEnroll}>
               <Text style={{ color: "white", fontWeight: "700" }}>
                 Enroll Now
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button2}>
+            <TouchableOpacity
+              style={styles.button2}
+              onPress={() => setIsDiscriptionOpen(!isDiscriptionOpen)}
+            >
               <Text style={{ color: body.recessive, fontWeight: "700" }}>
-                Read More
+                {isDiscriptionOpen ? "Read less" : "Read More"}
               </Text>
             </TouchableOpacity>
           </View>
@@ -111,7 +118,6 @@ const styles = StyleSheet.create({
   container2: {
     backgroundColor: body.tertiary,
     borderRadius: 5,
-    height: 400,
   },
   thumbnail: {
     width: "100%",
