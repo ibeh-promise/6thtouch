@@ -21,13 +21,9 @@ export default function Page() {
   const [error, setError] = useState(false);
   const [query, setQuery] = useState("");
   const router = useRouter();
+
   useEffect(() => {
-    const fetchData = async () => {
-      const { myCourses } = useAuth();
-      const data = await myCourses(setLoading, setError);
-      setResponse(data);
-    };
-    fetchData();
+    handleFetch();
   }, []);
 
   const handleFetch = async () => {
@@ -79,6 +75,7 @@ export default function Page() {
                 onChangeText={(text) => setQuery(text)}
                 placeholder="Search... "
                 style={styles.searchInput}
+                value={query}
               />
               <TouchableOpacity onPress={searchCourse}>
                 <FontAwesome

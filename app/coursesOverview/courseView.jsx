@@ -9,6 +9,8 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Modal,
+  Animated,
+  Easing,
 } from "react-native";
 import body from "@/constants/Colors";
 import { FontAwesome, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
@@ -29,6 +31,7 @@ export default function Page() {
   const [play, setPlay] = useState(false);
   const [isDone, setIsDone] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
   const setMessage = useTitleStore((state) => state.setMessage);
 
   useEffect(() => {
@@ -40,7 +43,7 @@ export default function Page() {
       setMessage(data[progress]);
       setError(false);
       console.log("data overview", data);
-      if (data.length === 0) {
+      if (data.length == 1) {
         setIsDone(true);
       }
     };
@@ -53,7 +56,7 @@ export default function Page() {
     setResponse(data);
     setMessage(response[progress]?.course?.title);
     console.log("data overview", data);
-    if (data.length === 0) {
+    if (data.length == 1) {
       setIsDone(true);
     }
   };
@@ -89,6 +92,37 @@ export default function Page() {
     setPlay(false);
   };
 
+  const handleMark = async () => {
+    try {
+      console.log(response[progress]?.id);
+      const { markCourse } = useAuth();
+      await markCourse(response[progress]?.id, setLoading, setError);
+      setOpenModal(false);
+      router.back();
+    } catch (error) {
+      console.error("Error in handleMark:", error);
+    }
+  };
+
+  const rotateAnim = new Animated.Value(0);
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.timing(rotateAnim, {
+        toValue: 1,
+        duration: 2000,
+        delay: 100,
+        easing: Easing.linear,
+        useNativeDriver: true,
+      })
+    ).start();
+  }, []);
+
+  const rotation = rotateAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0deg", "360deg"],
+  });
+
   return (
     <View style={styles.container}>
       {loading ? (
@@ -108,6 +142,68 @@ export default function Page() {
         </View>
       ) : (
         <>
+          {openModal && (
+            <Modal animationType="slide" visible={openModal}>
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: body.dominant,
+                }}
+              >
+                <Animated.View
+                  style={{
+                    width: 100,
+                    height: 100,
+                    borderWidth: 5,
+                    borderColor: body.tertiary,
+                    borderRadius: 50,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    transform: [{ rotate: rotation }],
+                  }}
+                >
+                  <FontAwesome name="check" size={50} color={body.tertiary} />
+                </Animated.View>
+                <Text
+                  style={{
+                    color: "white",
+                    fontSize: 30,
+                    fontWeight: "600",
+                    marginVertical: 20,
+                    textAlign: "center",
+                  }}
+                >
+                  Hurray!!! 👏🎊
+                </Text>
+                <Text style={{ color: "white", textAlign: "center" }}>
+                  You are done with this course
+                </Text>
+                <TouchableOpacity
+                  style={{
+                    width: 200,
+                    padding: 10,
+                    backgroundColor: body.tertiary,
+                    marginVertical: 30,
+                    borderRadius: 5,
+                  }}
+                  onPress={() => handleMark()}
+                >
+                  <Text
+                    style={{
+                      color: body.dominant,
+                      fontWeight: "600",
+                      textAlign: "center",
+                    }}
+                  >
+                    CONTINUE
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </Modal>
+          )}
+
           <View
             style={{ width: "100%", paddingHorizontal: 20, paddingTop: 30 }}
           >
@@ -226,12 +322,10 @@ export default function Page() {
               <View style={styles.btnCta}>
                 {isDone ? (
                   <>
-                    <Text style={styles.doneText}>
-                      You are done with this course
-                    </Text>
+                    <Text style={styles.doneText}></Text>
                     <TouchableOpacity
                       style={styles.nextBtn}
-                      onPress={() => router.back()}
+                      onPress={() => setOpenModal(true)}
                     >
                       <Text style={styles.btnText}>Done</Text>
                     </TouchableOpacity>

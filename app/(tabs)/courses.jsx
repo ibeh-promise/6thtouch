@@ -20,31 +20,24 @@ import useAuth from "@/hooks/useAuth";
 
 export default function Page() {
   const [displayOverview, setDisplayOverview] = useState(false);
+  const [response2, setResponse2] = useState({});
   const [response, setResponse] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [filter, setFilter] = useState(false);
   const [isActive, setIsActive] = useState("all");
-  useEffect(() => {
-    const fetchData = async () => {
-      const { myCourses } = useAuth();
-      const data = await myCourses(setLoading, setError);
-      setResponse(data);
-    };
-    fetchData();
-  }, []);
 
   const handleFetch = async () => {
     const { myCourses } = useAuth();
     const data = await myCourses(setLoading, setError);
     setResponse(data);
-    setError(false);
+    // console.log("gotten data",data);
   };
-  // const handleFetchCategories = async (categories) => {
-  //   const { coursesCategories } = useAuth();
-  //   const data = await coursesCategories(categories, setLoading, setError);
-  //   setResponse(data);
-  // };
+
+  useEffect(() => {
+    handleFetch();
+  }, []);
+
   const categoriesActive = (data) => {
     if (isActive == data) return styles.active;
   };
@@ -135,9 +128,9 @@ export default function Page() {
         ) : (
           <FlatList
             data={response}
-            renderItem={(data) => (
+            renderItem={({ item }) => (
               <MyCourses
-                data={data.item}
+                data={item}
                 setDisplayOverview={setDisplayOverview}
                 displayOverview={displayOverview}
               />

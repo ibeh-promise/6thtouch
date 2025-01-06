@@ -9,13 +9,14 @@ import {
   ActivityIndicator,
   Modal,
 } from "react-native";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "expo-router";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SplashScreen from "expo-splash-screen";
 import useAuth from "@/hooks/useAuth";
 import body from "@/constants/Colors";
+SplashScreen.preventAutoHideAsync();
 
 export default function Page() {
   const router = useRouter();
@@ -23,6 +24,23 @@ export default function Page() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isTokenChecked, setIsTokenChecked] = useState(false);
+
+  useEffect(() => {
+    setTimeout(async () => {
+      const token = await AsyncStorage.getItem("token");
+      setIsAuthenticated(true);
+      if (token) router.replace("/explore");
+      setIsTokenChecked(true);
+    }, 2000);
+  }, []);
+
+  if (isTokenChecked) {
+    setTimeout(() => {
+      SplashScreen.hideAsync();
+    }, 2000);
+  }
 
   const handleSubmit = async () => {
     if (loading) return;

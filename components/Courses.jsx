@@ -11,6 +11,7 @@ export default function Courses({ data, displayOverview, setDisplayOverview }) {
   const handleEnroll = async () => {
     try {
       await AsyncStorage.setItem("id", data.id);
+      await AsyncStorage.setItem("title", data.title);
       console.log(data.id);
       router.navigate("/coursesOverview/overview");
     } catch (error) {
@@ -87,7 +88,12 @@ export default function Courses({ data, displayOverview, setDisplayOverview }) {
             </Text>
           </View>
           {isDiscriptionOpen && (
-            <Text style={{ color: body.textDark }}>{data.description}</Text>
+            <>
+              <Text style={{ color: body.textDark, fontWeight: "900" }}>
+                Course Discription
+              </Text>
+              <Text style={{ color: body.textDark }}>{data.description}</Text>
+            </>
           )}
           <View style={styles.btnContainer}>
             <TouchableOpacity style={styles.button1} onPress={handleEnroll}>

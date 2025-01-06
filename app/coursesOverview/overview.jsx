@@ -23,20 +23,13 @@ export default function Page() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   useEffect(() => {
-    const fetchData = async () => {
-      const { coursesById } = useAuth();
-      const data = await coursesById(setLoading, setError);
-      setResponse(data);
-      console.log("data overview", response.topics);
-    };
-    fetchData();
+    handleFetch();
   }, []);
 
   const handleFetch = async () => {
     const { coursesById } = useAuth();
     setLoading(true);
     setError(false);
-
     try {
       const data = await coursesById(setLoading, setError);
       console.log("Refreshed Data:", data);
@@ -83,11 +76,11 @@ export default function Page() {
           </View>
           <Image source={{ uri: response.thumbnail }} style={styles.image} />
           <View style={styles.OverviewContainer}>
+            <Text style={{ color: body.tertiary }}>Course Topics</Text>
             <FlatList
               data={response.topics}
               renderItem={({ item }) => (
                 <ScrollView>
-                  <Text style={{ color: body.tertiary }}>Course Topics</Text>
                   <View style={styles.contentContainer}>
                     <Text style={styles.contentText}>{item.title}</Text>
                   </View>
@@ -173,6 +166,27 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 5,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  errorContainerContent: {
+    width: 200,
+    padding: 20,
+    backgroundColor: body.darkDominant,
+  },
+  errorText: {
+    color: body.tertiary,
+    fontSize: 15,
+  },
+  errorBtn: {
+    width: "100%",
+    padding: 10,
+    alignItems: "center",
+    marginTop: 10,
+    backgroundColor: body.dominant2,
   },
   enrollText: {
     color: body.dominant,
