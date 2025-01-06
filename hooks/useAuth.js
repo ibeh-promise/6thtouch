@@ -75,6 +75,7 @@ const useAuth = () => {
         console.log(res.data);
         if (res.data.token) {
           Alert.alert("", "Login Successfully");
+          console.log(res.data.token)
           await AsyncStorage.setItem("token", res.data.token);
           router.navigate("/explore");
         }
@@ -461,14 +462,23 @@ const useAuth = () => {
           },
         }
       );
-      console.log(response.data);
-      return response.data;
+      const response2 = await axios.get(
+        "https://6thtouchsever.vercel.app/user/me/",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = response.data
+      const data2 = response2.data
       setError(false);
+      return {data, data2};
     } catch (error) {
       console.error(error.response);
       const errorMessage =
         error.response?.data?.message || "An error occurred. Please try again.";
-      Alert.alert("Fetching Data Error", errorMessage);
+        Alert.alert("Fetching Data Error", errorMessage);
       if (error.message) {
         setError(true);
       }
@@ -578,7 +588,6 @@ const searchMyCourses = async (query, setLoading, setError) => {
     setLoading(false);
   }
 };
-
   const paymentHistory = async (setLoading, setError) => {
     try {
       setLoading(true);
@@ -602,8 +611,7 @@ const searchMyCourses = async (query, setLoading, setError) => {
     } finally {
       setLoading(false);
     }
-  };
-
+};
   const createReport = async (
     title,
     message,
@@ -640,7 +648,34 @@ const searchMyCourses = async (query, setLoading, setError) => {
           router.back();
         }
     }
-  };
+};
+
+  const markCourse = async (topicId, setLoading, setError) => {
+    try{
+      setLoading(true)
+      const token = await AsyncStorage.getItem("token");
+      const response = await axios.put(
+          `https://6thtouchsever.vercel.app/courses/topics/${topicId}/complete`,
+          {}, 
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+      console.log(response.data)
+      Alert.alert("Successful", "Progress Saved!")
+      return response
+    } catch (error) {
+      Alert.alert("error", error.message)
+      if ( error ) {
+        console.log(error)
+      }
+    } finally{
+      setLoading(false)
+    }
+  }
 
   return {
     signup,
@@ -663,6 +698,7 @@ const searchMyCourses = async (query, setLoading, setError) => {
     searchMyCourses,
     paymentHistory,
     createReport,
+    markCourse
   };
 };
 
