@@ -27,28 +27,17 @@ export default function Page() {
   const [filter, setFilter] = useState(false);
   const [isActive, setIsActive] = useState("all");
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const { myCourses } = useAuth();
-      const { data, data2 } = await myCourses(setLoading, setError);
-      setResponse(data);
-      setResponse2(data2);
-    };
-    fetchData();
-  }, []);
-
   const handleFetch = async () => {
     const { myCourses } = useAuth();
-    const { data, data2 } = await myCourses(setLoading, setError);
+    const data = await myCourses(setLoading, setError);
     setResponse(data);
-    setResponse2(data2);
-    setError(false);
+    // console.log("gotten data",data);
   };
-  // const handleFetchCategories = async (categories) => {
-  //   const { coursesCategories } = useAuth();
-  //   const data = await coursesCategories(categories, setLoading, setError);
-  //   setResponse(data);
-  // };
+
+  useEffect(() => {
+    handleFetch();
+  }, []);
+
   const categoriesActive = (data) => {
     if (isActive == data) return styles.active;
   };
@@ -138,10 +127,10 @@ export default function Page() {
           </View>
         ) : (
           <FlatList
-            data={[response, response2]}
-            renderItem={(data, data2) => (
+            data={response}
+            renderItem={({ item }) => (
               <MyCourses
-                data={[data.item, data2]}
+                data={item}
                 setDisplayOverview={setDisplayOverview}
                 displayOverview={displayOverview}
               />

@@ -5,17 +5,17 @@ import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function MyCourses({ data, data2 }) {
+export default function MyCourses({ data }) {
   if (!data || data.length === 0) {
     return <Text>No courses available</Text>;
   }
 
-  console.log("data received in my courses", data[0]);
+  console.log("data received in my courses", data);
 
   const handleStartLearning = async () => {
     try {
-      await AsyncStorage.setItem("title", data[0].title);
-      await AsyncStorage.setItem("id", data[0].id);
+      await AsyncStorage.setItem("title", data.title);
+      await AsyncStorage.setItem("id", data.id);
       router.navigate("/coursesOverview/courseView");
     } catch (error) {
       console.error("Error saving data to AsyncStorage:", error);
@@ -27,12 +27,12 @@ export default function MyCourses({ data, data2 }) {
       <View style={styles.container2}>
         <Image
           defaultSource={require("@/assets/images/images_(1).png")}
-          source={{ uri: data[0]?.thumbnail }}
+          source={{ uri: data?.thumbnail }}
           style={styles.thumbnail}
         />
         <View style={styles.courseDetails}>
           <Text style={{ fontSize: 16, fontWeight: 600, color: body.textDark }}>
-            {data[0]?.title}
+            {data?.title}
           </Text>
 
           <View style={styles.btnContainer}>

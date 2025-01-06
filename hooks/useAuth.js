@@ -368,10 +368,9 @@ const useAuth = () => {
       );
       console.log(response.data);
       return response.data;
-      setError(false);
     } catch (error) {
       console.error(error.message);
-      if (error.message) {
+      if (error) {
         setError(true);
       }
     } finally {
@@ -462,24 +461,16 @@ const useAuth = () => {
           },
         }
       );
-      const response2 = await axios.get(
-        "https://6thtouchsever.vercel.app/user/me/",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+    
       const data = response.data
-      const data2 = response2.data
-      setError(false);
-      return {data, data2};
+      
+      return data;
     } catch (error) {
       console.error(error.response);
       const errorMessage =
         error.response?.data?.message || "An error occurred. Please try again.";
         Alert.alert("Fetching Data Error", errorMessage);
-      if (error.message) {
+      if (error) {
         setError(true);
       }
     } finally {
