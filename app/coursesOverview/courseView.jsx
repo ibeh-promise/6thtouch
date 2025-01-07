@@ -52,10 +52,13 @@ export default function Page() {
     }
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (progress + 1 >= response.length) {
       setIsDone(true);
+      setOpenModal(true);
     } else {
+      const { markCourse } = useAuth();
+      await markCourse(response[progress]?.id, setLoading, setError);
       setProgress(progress + 1);
       setIsDone(false);
     }
@@ -317,37 +320,62 @@ export default function Page() {
                   </Markdown>
                 </Text>
               </View>
+
               <View style={styles.btnCta}>
-                {isDone ? (
-                  <>
-                    <Text style={styles.doneText}></Text>
+                <View style={styles.btnCta}>
+                  {progress === response.length ? (
+                    // Progress equals response length
+                    progress > 0 ? (
+                      // Display "Done" and "Back" buttons
+                      <>
+                        <TouchableOpacity
+                          style={styles.nextBtn}
+                          onPress={handleBack}
+                        >
+                          <Text style={styles.btnText}>Back</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={[styles.nextBtn, styles.spacing]}
+                          onPress={() => setOpenModal(true)}
+                        >
+                          <Text style={styles.btnText}>Done</Text>
+                        </TouchableOpacity>
+                      </>
+                    ) : (
+                      // Display "Done" button only
+                      <TouchableOpacity
+                        style={styles.nextBtn}
+                        onPress={() => setOpenModal(true)}
+                      >
+                        <Text style={styles.btnText}>Done</Text>
+                      </TouchableOpacity>
+                    )
+                  ) : progress === 0 ? (
+                    // Progress is 0 and not at the end
                     <TouchableOpacity
                       style={styles.nextBtn}
-                      onPress={() => setOpenModal(true)}
+                      onPress={handleNext}
                     >
-                      <Text style={styles.btnText}>Done</Text>
+                      <Text style={styles.btnText}>Next</Text>
                     </TouchableOpacity>
-                  </>
-                ) : (
-                  <>
-                    {progress > 0 && (
+                  ) : (
+                    // Progress is not 0 and not at the end
+                    <>
                       <TouchableOpacity
                         style={styles.nextBtn}
                         onPress={handleBack}
                       >
                         <Text style={styles.btnText}>Back</Text>
                       </TouchableOpacity>
-                    )}
-                    {progress < response.length - 1 && (
                       <TouchableOpacity
-                        style={[styles.nextBtn, progress > 0 && styles.spacing]}
+                        style={[styles.nextBtn, styles.spacing]}
                         onPress={handleNext}
                       >
                         <Text style={styles.btnText}>Next</Text>
                       </TouchableOpacity>
-                    )}
-                  </>
-                )}
+                    </>
+                  )}
+                </View>
               </View>
             </ScrollView>
           </View>

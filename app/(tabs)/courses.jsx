@@ -28,16 +28,12 @@ export default function Page() {
   const [isActive, setIsActive] = useState("all");
 
   const handleFetch = async () => {
-    const { myCourses, account } = useAuth();
+    const { myCourses } = useAuth();
     const data = await myCourses(setLoading, setError);
-
-    // const accountData = await account(setLoading, setError);
-    // const totalCompletedTopics = account.topics[0].filter(
-    //   (topic) => topic.courseId == data[0].id
-    // );
-    // console.log("completedTopics", totalCompletedTopics.id);
+    if (data.length != 0) {
+      setError(false);
+    }
     setResponse(data);
-    // console.log("gotten data",data);
   };
 
   useEffect(() => {

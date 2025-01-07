@@ -36,25 +36,21 @@ export default function Page() {
   const click = useClicksStore((state) => state.message);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const { courses } = useAuth();
-      const data = await courses(setLoading, setError);
-      setResponse(data);
-    };
-    fetchData();
+    handleFetch();
   }, []);
 
   const handleFetch = async () => {
     const { courses } = useAuth();
     const data = await courses(setLoading, setError);
+    if (data.length != 0) {
+      setError(false);
+    }
     setResponse(data);
-    setError(false);
   };
   const handleFetchCategories = async (categories) => {
     const { coursesCategories } = useAuth();
     const data = await coursesCategories(categories, setLoading, setError);
     setResponse(data);
-    setError(false);
   };
 
   const categoriesActive = (data) => {
