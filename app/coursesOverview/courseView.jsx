@@ -19,6 +19,7 @@ import useAuth from "@/hooks/useAuth";
 import { useRouter } from "expo-router";
 import { Video } from "expo-av";
 import * as Speech from "expo-speech";
+import Markdown, { MarkdownIt } from "react-native-markdown-display";
 import useTitleStore from "../store/titleStore";
 
 export default function Page() {
@@ -33,27 +34,17 @@ export default function Page() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const setMessage = useTitleStore((state) => state.setMessage);
+  const [markDownData, setMarkDownData] = useState("");
 
   useEffect(() => {
-    const fetchData = async () => {
-      const { topicsByCourseId } = useAuth();
-      const data = await topicsByCourseId(setLoading, setError);
-      setTitle(data[progress]?.course?.title);
-      setResponse(data);
-      setMessage(data[progress]);
-      setError(false);
-      console.log("data overview", data);
-      if (data.length == 1) {
-        setIsDone(true);
-      }
-    };
-    fetchData();
+    handleFetch();
   }, []);
 
   const handleFetch = async () => {
     const { topicsByCourseId } = useAuth();
     const data = await topicsByCourseId(setLoading, setError);
     setResponse(data);
+    setMarkDownData(data[progress]?.note);
     setMessage(response[progress]?.course?.title);
     console.log("data overview", data);
     if (data.length == 1) {
@@ -316,7 +307,14 @@ export default function Page() {
             <ScrollView>
               <View style={styles.contentContainer}>
                 <Text style={styles.contentText}>
-                  {response[progress]?.note}{" "}
+                  <Markdown
+                    markdownit={MarkdownIt({ typographer: true }).disable([
+                      "link",
+                      "image",
+                    ])}
+                  >
+                    {markDownData}
+                  </Markdown>
                 </Text>
               </View>
               <View style={styles.btnCta}>
