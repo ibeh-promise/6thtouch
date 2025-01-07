@@ -19,6 +19,7 @@ import useAuth from "@/hooks/useAuth";
 import { useRouter } from "expo-router";
 import { Video } from "expo-av";
 import * as Speech from "expo-speech";
+import Markdown, { MarkdownIt } from "react-native-markdown-display";
 import useTitleStore from "../store/titleStore";
 
 export default function Page() {
@@ -33,27 +34,17 @@ export default function Page() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const setMessage = useTitleStore((state) => state.setMessage);
+  const [markDownData, setMarkDownData] = useState("");
 
   useEffect(() => {
-    const fetchData = async () => {
-      const { topicsByCourseId } = useAuth();
-      const data = await topicsByCourseId(setLoading, setError);
-      setTitle(data[progress]?.course?.title);
-      setResponse(data);
-      setMessage(data[progress]);
-      setError(false);
-      console.log("data overview", data);
-      if (data.length == 1) {
-        setIsDone(true);
-      }
-    };
-    fetchData();
+    handleFetch();
   }, []);
 
   const handleFetch = async () => {
     const { topicsByCourseId } = useAuth();
     const data = await topicsByCourseId(setLoading, setError);
     setResponse(data);
+    setMarkDownData(data[progress]?.note);
     setMessage(response[progress]?.course?.title);
     console.log("data overview", data);
     if (data.length == 1) {
@@ -61,10 +52,13 @@ export default function Page() {
     }
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (progress + 1 >= response.length) {
       setIsDone(true);
+      setOpenModal(true);
     } else {
+      const { markCourse } = useAuth();
+      await markCourse(response[progress]?.id, setLoading, setError);
       setProgress(progress + 1);
       setIsDone(false);
     }
@@ -316,40 +310,72 @@ export default function Page() {
             <ScrollView>
               <View style={styles.contentContainer}>
                 <Text style={styles.contentText}>
-                  {response[progress]?.note}{" "}
+                  <Markdown
+                    markdownit={MarkdownIt({ typographer: true }).disable([
+                      "link",
+                      "image",
+                    ])}
+                  >
+                    {markDownData}
+                  </Markdown>
                 </Text>
               </View>
+
               <View style={styles.btnCta}>
-                {isDone ? (
-                  <>
-                    <Text style={styles.doneText}></Text>
+                <View style={styles.btnCta}>
+                  {progress === response.length ? (
+                    // Progress equals response length
+                    progress > 0 ? (
+                      // Display "Done" and "Back" buttons
+                      <>
+                        <TouchableOpacity
+                          style={styles.nextBtn}
+                          onPress={handleBack}
+                        >
+                          <Text style={styles.btnText}>Back</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={[styles.nextBtn, styles.spacing]}
+                          onPress={() => setOpenModal(true)}
+                        >
+                          <Text style={styles.btnText}>Done</Text>
+                        </TouchableOpacity>
+                      </>
+                    ) : (
+                      // Display "Done" button only
+                      <TouchableOpacity
+                        style={styles.nextBtn}
+                        onPress={() => setOpenModal(true)}
+                      >
+                        <Text style={styles.btnText}>Done</Text>
+                      </TouchableOpacity>
+                    )
+                  ) : progress === 0 ? (
+                    // Progress is 0 and not at the end
                     <TouchableOpacity
                       style={styles.nextBtn}
-                      onPress={() => setOpenModal(true)}
+                      onPress={handleNext}
                     >
-                      <Text style={styles.btnText}>Done</Text>
+                      <Text style={styles.btnText}>Next</Text>
                     </TouchableOpacity>
-                  </>
-                ) : (
-                  <>
-                    {progress > 0 && (
+                  ) : (
+                    // Progress is not 0 and not at the end
+                    <>
                       <TouchableOpacity
                         style={styles.nextBtn}
                         onPress={handleBack}
                       >
                         <Text style={styles.btnText}>Back</Text>
                       </TouchableOpacity>
-                    )}
-                    {progress < response.length - 1 && (
                       <TouchableOpacity
-                        style={[styles.nextBtn, progress > 0 && styles.spacing]}
+                        style={[styles.nextBtn, styles.spacing]}
                         onPress={handleNext}
                       >
                         <Text style={styles.btnText}>Next</Text>
                       </TouchableOpacity>
-                    )}
-                  </>
-                )}
+                    </>
+                  )}
+                </View>
               </View>
             </ScrollView>
           </View>

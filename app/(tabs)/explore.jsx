@@ -30,31 +30,31 @@ export default function Page() {
   const [displayOverview, setDisplayOverview] = useState(false);
   const [isActive, setIsActive] = useState("all");
   const [response, setResponse] = useState([]);
+  const [response2, setResponse2] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [filter, setFilter] = useState(false);
   const click = useClicksStore((state) => state.message);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const { courses } = useAuth();
-      const data = await courses(setLoading, setError);
-      setResponse(data);
-    };
-    fetchData();
+    handleFetch();
   }, []);
 
   const handleFetch = async () => {
-    const { courses } = useAuth();
+    const { courses, account } = useAuth();
     const data = await courses(setLoading, setError);
+    const accountData = await account(setLoading, setError);
+    if (data.length != 0) {
+      setError(false);
+    }
     setResponse(data);
-    setError(false);
+    setResponse2(accountData);
+    console.log("accountData", accountData);
   };
   const handleFetchCategories = async (categories) => {
     const { coursesCategories } = useAuth();
     const data = await coursesCategories(categories, setLoading, setError);
     setResponse(data);
-    setError(false);
   };
 
   const categoriesActive = (data) => {
@@ -214,6 +214,7 @@ export default function Page() {
               renderItem={(data) => (
                 <Courses
                   data={data.item}
+                  accountData={response2}
                   setDisplayOverview={setDisplayOverview}
                   displayOverview={displayOverview}
                 />

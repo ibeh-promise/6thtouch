@@ -1,17 +1,30 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
 import { useState } from "react";
 import body from "@/constants/Colors";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Progress from "react-native-progress";
 
 export default function MyCourses({ data }) {
   if (!data || data.length === 0) {
     return <Text>No courses available</Text>;
   }
 
-  console.log("data received in my courses", data);
+  console.log(
+    "data received in my courses",
+    data.completedTopics.length,
+    data.topics.length
+  );
 
+  const progress = data.completedTopics.length / data.topics.length;
   const handleStartLearning = async () => {
     try {
       await AsyncStorage.setItem("title", data.title);
@@ -35,16 +48,44 @@ export default function MyCourses({ data }) {
             {data?.title}
           </Text>
 
-          <View style={styles.btnContainer}>
-            <TouchableOpacity
-              style={styles.button1}
-              onPress={handleStartLearning}
-            >
-              <Text style={{ color: "white", fontWeight: "700" }}>
-                Start learning
+          {data.completedTopics.length != 0 && (
+            <View style={styles.progressContainer}>
+              <Text style={styles.progressText}>
+                {Math.round(progress * 100)}%
               </Text>
-            </TouchableOpacity>
-          </View>
+              <Progress.Bar
+                progress={progress}
+                width={Dimensions.get("window").width - 100}
+                color={body.recessive}
+                style={{ backgroundColor: "#e2e2e2", border: "none" }}
+                height={20}
+                borderRadius={5}
+              />
+            </View>
+          )}
+          {data.completedTopics.length == 0 ? (
+            <View style={styles.btnContainer}>
+              <TouchableOpacity
+                style={styles.button1}
+                onPress={handleStartLearning}
+              >
+                <Text style={{ color: "white", fontWeight: "700" }}>
+                  Start learning
+                </Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View style={styles.btnContainer}>
+              <TouchableOpacity
+                style={styles.button1}
+                onPress={handleStartLearning}
+              >
+                <Text style={{ color: "white", fontWeight: "700" }}>
+                  Continue learning
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
       </View>
     </View>
@@ -73,7 +114,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: 20,
+    marginTop: 10,
   },
   button1: {
     backgroundColor: body.recessive,
@@ -81,5 +122,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     alignItems: "center",
     borderRadius: 5,
+  },
+  progressContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  progressText: {
+    width: "100%",
+    fontSize: 16,
+    textAlign: "left",
+    marginBottom: 5,
   },
 });
