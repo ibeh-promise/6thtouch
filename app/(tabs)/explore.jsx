@@ -30,6 +30,7 @@ export default function Page() {
   const [displayOverview, setDisplayOverview] = useState(false);
   const [isActive, setIsActive] = useState("all");
   const [response, setResponse] = useState([]);
+  const [response2, setResponse2] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [filter, setFilter] = useState(false);
@@ -40,12 +41,15 @@ export default function Page() {
   }, []);
 
   const handleFetch = async () => {
-    const { courses } = useAuth();
+    const { courses, account } = useAuth();
     const data = await courses(setLoading, setError);
+    const accountData = await account(setLoading, setError);
     if (data.length != 0) {
       setError(false);
     }
     setResponse(data);
+    setResponse2(accountData);
+    console.log("accountData", accountData);
   };
   const handleFetchCategories = async (categories) => {
     const { coursesCategories } = useAuth();
@@ -210,6 +214,7 @@ export default function Page() {
               renderItem={(data) => (
                 <Courses
                   data={data.item}
+                  accountData={response2}
                   setDisplayOverview={setDisplayOverview}
                   displayOverview={displayOverview}
                 />

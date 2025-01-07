@@ -89,25 +89,16 @@ export default function Page() {
             />
           </View>
           <View style={{ width: "100%", position: "absolute", bottom: 30 }}>
-            {response.isPaid ? (
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => {
-                  router.navigate("/coursesOverview/courseView");
-                }}
-              >
-                <Text style={styles.enrollText}>Start Learning</Text>
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => {
-                  router.navigate("/payments/payment");
-                }}
-              >
-                <Text style={styles.enrollText}>Enroll Now</Text>
-              </TouchableOpacity>
-            )}
+            (
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => {
+                router.navigate("/payments/payment");
+              }}
+            >
+              <Text style={styles.enrollText}>Enroll Now</Text>
+            </TouchableOpacity>
+            )
           </View>
         </>
       )}

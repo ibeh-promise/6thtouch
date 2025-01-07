@@ -20,7 +20,6 @@ import useAuth from "@/hooks/useAuth";
 
 export default function Page() {
   const [displayOverview, setDisplayOverview] = useState(false);
-  const [response2, setResponse2] = useState({});
   const [response, setResponse] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);

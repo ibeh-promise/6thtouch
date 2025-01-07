@@ -2,12 +2,17 @@ import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import { useState } from "react";
 import body from "@/constants/Colors";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
-import useAuth from "@/hooks/useAuth";
 import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function Courses({ data, displayOverview, setDisplayOverview }) {
+export default function Courses({
+  data,
+  accountData,
+  displayOverview,
+  setDisplayOverview,
+}) {
   const [isDiscriptionOpen, setIsDiscriptionOpen] = useState(false);
+
   const handleEnroll = async () => {
     try {
       await AsyncStorage.setItem("id", data.id);
@@ -15,9 +20,20 @@ export default function Courses({ data, displayOverview, setDisplayOverview }) {
       console.log(data.id);
       router.navigate("/coursesOverview/overview");
     } catch (error) {
-      throw error;
+      console.error(error);
     }
   };
+
+  // Conditional Rendering Logic
+  const isUserSubscribed =
+    Array.isArray(data.subscribers) &&
+    data.subscribers.some((user) => user.id === accountData?.id);
+
+  if (isUserSubscribed) {
+    return null; // Don't render anything if the user isn't subscribed
+  }
+
+  // Render the component
   return (
     <View style={styles.container}>
       <View style={styles.container2}>
@@ -27,7 +43,9 @@ export default function Courses({ data, displayOverview, setDisplayOverview }) {
           style={styles.thumbnail}
         />
         <View style={styles.courseDetails}>
-          <Text style={{ fontSize: 16, fontWeight: 600, color: body.textDark }}>
+          <Text
+            style={{ fontSize: 16, fontWeight: "600", color: body.textDark }}
+          >
             {data.title}
           </Text>
           <View style={styles.detailContent}>
@@ -65,9 +83,7 @@ export default function Courses({ data, displayOverview, setDisplayOverview }) {
               </Text>
             </View>
 
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Text style={{ color: body.textDark }}>{data.duration}</Text>
-            </View>
+            <Text style={{ color: body.textDark }}>{data.duration}</Text>
           </View>
           <View style={styles.detailContent}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -90,7 +106,7 @@ export default function Courses({ data, displayOverview, setDisplayOverview }) {
           {isDiscriptionOpen && (
             <>
               <Text style={{ color: body.textDark, fontWeight: "900" }}>
-                Course Discription
+                Course Description
               </Text>
               <Text style={{ color: body.textDark }}>{data.description}</Text>
             </>
