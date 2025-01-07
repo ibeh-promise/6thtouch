@@ -11,6 +11,7 @@ import {
   Modal,
   Animated,
   Easing,
+  BackHandler,
 } from "react-native";
 import body from "@/constants/Colors";
 import { FontAwesome, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
@@ -53,6 +54,7 @@ export default function Page() {
   };
 
   const handleNext = async () => {
+    stopAudio();
     if (progress + 1 >= response.length) {
       setIsDone(true);
       setOpenModal(true);
@@ -85,6 +87,10 @@ export default function Page() {
     Speech.stop();
     setPlay(false);
   };
+
+  BackHandler.addEventListener("hardwareBackPress", () => {
+    stopAudio();
+  });
 
   const handleMark = async () => {
     try {
@@ -426,6 +432,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     marginVertical: 10,
     marginHorizontal: 10,
+    marginBottom: 50,
   },
   button: {
     padding: 15,
@@ -483,6 +490,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   btnCta: {
+    marginTop: 30,
     width: "100%",
     paddingHorizontal: 20,
     paddingVertical: 10,
