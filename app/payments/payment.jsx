@@ -18,17 +18,19 @@ export default function Page() {
   const [response, setResponse] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-
+  const [email, setEmail] = useState("");
   useEffect(() => {
     const fetchData = async () => {
-      const { coursesById } = useAuth();
+      const { coursesById, account } = useAuth();
       setLoading(true);
       setError(false);
 
       try {
         const data = await coursesById(setLoading, setError);
-        console.log("Fetched Data:", data); // Log fetched data
-        setResponse(data); // Update state
+        const fetchedAccountData = await account(setLoading, setError);
+        console.log("Fetched Data:", data);
+        setResponse(data);
+        setEmail(fetchedAccountData.email);
       } catch (err) {
         console.error("Error fetching data:", err);
         setError(true);
@@ -94,9 +96,9 @@ export default function Page() {
 
   const paymentOptions = {
     tx_ref: generateTransactionRef(10),
-    authorization: "FLWPUBK_TEST-bf6ef0978ed5d715b3f5b39954aa4de2-X",
+    authorization: "FLWPUBK-90378e97a19bacb82f3adbd55e1dcf28-X",
     customer: {
-      email: "ibehpromise3d@gmail.com",
+      email: email,
     },
     amount: response?.price,
     currency: "USD",

@@ -1,4 +1,11 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
 import { useState } from "react";
 import body from "@/constants/Colors";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
@@ -43,11 +50,20 @@ export default function Courses({
           style={styles.thumbnail}
         />
         <View style={styles.courseDetails}>
-          <Text
-            style={{ fontSize: 16, fontWeight: "600", color: body.textDark }}
-          >
-            {data.title}
-          </Text>
+          <View style={styles.detailContent}>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Text
+                style={{
+                  color: body.textDark,
+                  fontWeight: "900",
+                  fontSize: 20,
+                }}
+              >
+                {data.title}
+              </Text>
+            </View>
+            {!data.isPaid && <Text style={styles.freeText}>Free</Text>}
+          </View>
           <View style={styles.detailContent}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <FontAwesome name="eye" size={16} color={body.textDark} />
@@ -157,6 +173,18 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingHorizontal: 0,
     marginBottom: 10,
+  },
+  freeText: {
+    marginLeft: 5,
+    color: "blue",
+    fontSize: 13,
+    fontWeight: 900,
+    borderColor: "blue",
+    borderWidth: 1.5,
+    borderStyle: "solid",
+    borderRadius: 5,
+    paddingHorizontal: 5,
+    paddingVertical: 2,
   },
   btnContainer: {
     flexDirection: "row",

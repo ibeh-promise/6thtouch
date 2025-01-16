@@ -52,6 +52,21 @@ export default function Page() {
 
   getItem();
 
+  const handleAddFreeCourseToMyCourses = async () => {
+    const { addFreeCourseToMycourse } = useAuth();
+    setLoading(true);
+    setError(false);
+    try {
+      const data = await addFreeCourseToMycourse(response?.id, setLoading);
+      console.log("Refreshed Data:", data);
+      setResponse(data);
+    } catch (err) {
+      console.error("Error refreshing data:", err);
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <View style={styles.container}>
       {loading ? (
@@ -89,16 +104,23 @@ export default function Page() {
             />
           </View>
           <View style={{ width: "100%", position: "absolute", bottom: 30 }}>
-            (
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => {
-                router.navigate("/payments/payment");
-              }}
-            >
-              <Text style={styles.enrollText}>Enroll Now</Text>
-            </TouchableOpacity>
-            )
+            {response.isPaid ? (
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => {
+                  router.navigate("/payments/payment");
+                }}
+              >
+                <Text style={styles.enrollText}>Enroll Now</Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                style={styles.button}
+                onPress={handleAddFreeCourseToMyCourses}
+              >
+                <Text style={styles.enrollText}>Add To Courses</Text>
+              </TouchableOpacity>
+            )}
           </View>
         </>
       )}

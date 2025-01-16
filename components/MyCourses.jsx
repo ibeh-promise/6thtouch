@@ -59,7 +59,8 @@ export default function MyCourses({ data }) {
                 color={body.recessive}
                 style={{ backgroundColor: "#e2e2e2", border: "none" }}
                 height={20}
-                borderRadius={5}
+                borderWidth={0}
+                borderRadius={0}
               />
             </View>
           )}

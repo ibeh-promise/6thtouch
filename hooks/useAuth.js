@@ -280,7 +280,7 @@ const useAuth = () => {
         router.navigate("/settings/otp/verifyOtp");
         return response;
       } catch (error) {
-        Alert.alert("", "Network error");
+        Alert.alert("",  error.response?.data?.message || "An unexpected error occurred");
       } finally {
         setLoading(false);
       }
@@ -668,6 +668,33 @@ const searchMyCourses = async (query, setLoading, setError) => {
     }
   }
 
+  const addFreeCourseToMycourse = async (courseId, setLoading) => {
+        try {
+          setLoading(true);
+          const token = await AsyncStorage.getItem("token");
+          const response = await axios.post(
+            "https://6thtouchsever.vercel.app/courses/free/add",
+            {
+              courseId
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          Alert.alert("", response.data.message);
+          return response;
+        } catch (error) {
+          Alert.alert("", "Network error");
+          console.log(error.message)
+        } finally {
+          setLoading(false);
+          router.back();
+          router.navigate("/(tabs)/courses");
+        }
+    
+};
   return {
     signup,
     login,
@@ -689,7 +716,8 @@ const searchMyCourses = async (query, setLoading, setError) => {
     searchMyCourses,
     paymentHistory,
     createReport,
-    markCourse
+    markCourse,
+    addFreeCourseToMycourse
   };
 };
 
