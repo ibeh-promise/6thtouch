@@ -73,6 +73,7 @@ export default function Page() {
                 onChangeText={(text) => setQuery(text)}
                 placeholder="Search... "
                 style={styles.searchInput}
+                keyboardType="web-search"
                 value={query}
               />
               <TouchableOpacity onPress={searchCourse}>
