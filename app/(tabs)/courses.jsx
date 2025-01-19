@@ -15,10 +15,11 @@ import {
   MaterialIcons,
 } from "@expo/vector-icons";
 import MyCourses from "@/components/MyCourses";
-import { router } from "expo-router";
+import { useRouter } from "expo-router";
 import useAuth from "@/hooks/useAuth";
 
 export default function Page() {
+  const router = useRouter();
   const [displayOverview, setDisplayOverview] = useState(false);
   const [response, setResponse] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -123,6 +124,18 @@ export default function Page() {
               <Text style={styles.errorText}>Network Connection Error</Text>
               <TouchableOpacity style={styles.errorBtn} onPress={handleFetch}>
                 <Text style={styles.errorText}>Refresh</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ) : response.length === 0 ? (
+          <View style={styles.errorContainer}>
+            <View style={styles.errorContainerContent}>
+              <Text style={styles.errorText}>No course Available</Text>
+              <TouchableOpacity
+                style={styles.errorBtn}
+                onPress={() => router.navigate("/(tabs)/explore")}
+              >
+                <Text style={styles.errorText}>Explore</Text>
               </TouchableOpacity>
             </View>
           </View>

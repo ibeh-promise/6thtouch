@@ -473,6 +473,9 @@ const useAuth = () => {
       if (error) {
         setError(true);
       }
+      if (error.status == 404) {
+        setError(false);
+      }
     } finally {
       setLoading(false);
     }
@@ -691,7 +694,6 @@ const searchMyCourses = async (query, setLoading, setError) => {
         } finally {
           setLoading(false);
           router.back();
-          router.navigate("/(tabs)/courses");
         }
     
 };

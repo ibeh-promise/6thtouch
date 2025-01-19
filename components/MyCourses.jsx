@@ -14,10 +14,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Progress from "react-native-progress";
 
 export default function MyCourses({ data }) {
-  if (!data || data.length === 0) {
-    return <Text>No courses available</Text>;
-  }
-
   console.log(
     "data received in my courses",
     data.completedTopics.length,
