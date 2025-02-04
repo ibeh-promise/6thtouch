@@ -13,7 +13,6 @@ import {
 import body from "@/constants/Colors";
 import useAuth from "@/hooks/useAuth";
 import { router } from "expo-router";
-import { PUBLIC_KEY } from "@env";
 
 export default function Page() {
   const [response, setResponse] = useState({});
@@ -97,7 +96,7 @@ export default function Page() {
 
   const paymentOptions = {
     tx_ref: generateTransactionRef(10),
-    authorization: PUBLIC_KEY,
+    authorization: process.env.EXPO_PUBLIC_KEY,
     customer: {
       email: email,
     },
